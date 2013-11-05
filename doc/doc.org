@@ -1,0 +1,16 @@
+# \bibliography{./bibliography}
+#+TITLE: GIS Porównanie algorytmów generowania wszystkich klik w grafie
+#+AUTHOR: Marek Lewandowski, Juliusz Gonera
+#+DATE:
+#+OPTIONS: toc:nil
+#+LaTeX_HEADER: \usepackage{biblatex}
+#+LaTeX_HEADER: \bibliography{bibliography}
+
+* Algorytm
+  Do zaimplementowania został wybrany algorytm Brona-Kerboscha\cite{kerbosch} w wersji bez pivotingu. Zostanie on porównany z dostępną implementacją w bibliotece JGraphT\cite{jgrapht}.
+* Technologia
+  Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
+* Testy
+  Częścią projektu jest opracowanie danych testowych na których zostanie zbadana poprawność jak i czas wykonania algorytmów.
+
+\printbibliography
