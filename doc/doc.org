@@ -7,10 +7,10 @@
 #+LaTeX_HEADER: \bibliography{bibliography}
 
 * Algorytm
-  Do zaimplementowania został wybrany algorytm Brona-Kerboscha\cite{kerbosch} w wersji bez pivotingu. Zostanie on porównany z dostępną implementacją w bibliotece JGraphT\cite{jgrapht}.
+  Do zaimplementowania został wybrany algorytm opisany w \cite{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\cite{jgrapht}.
 * Technologia
   Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
 * Testy
-  Częścią projektu jest opracowanie danych testowych na których zostanie zbadana poprawność jak i czas wykonania algorytmów.
+Do testowania poprawności i empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\cite{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
 \printbibliography
