@@ -1,5 +1,5 @@
 # \bibliography{./bibliography}
-#+TITLE: GIS Porównanie algorytmów generowania wszystkich klik w grafie
+#+TITLE: Grafy i Sieci: Porównanie algorytmów znajdowania maksymalnej kliki w grafie
 #+AUTHOR: Marek Lewandowski, Juliusz Gonera
 #+DATE:
 #+OPTIONS: toc:nil
