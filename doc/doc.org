@@ -1,5 +1,5 @@
 # \bibliography{./bibliography}
-#+TITLE: Grafy i Sieci: Porównanie algorytmów znajdowania maksymalnej kliki w grafie
+#+TITLE: Porównanie algorytmów znajdowania maksymalnej kliki w grafie
 #+AUTHOR: Marek Lewandowski, Juliusz Gonera
 #+DATE:
 #+OPTIONS: toc:nil
