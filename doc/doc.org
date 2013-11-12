@@ -1,15 +1,15 @@
-# \bibliography{./bibliography}
 #+TITLE: Porównanie algorytmów znajdowania maksymalnej kliki w grafie
 #+AUTHOR: Marek Lewandowski, Juliusz Gonera
 #+DATE:
 #+OPTIONS: toc:nil
 #+LaTeX_HEADER: \usepackage{biblatex}
 #+LaTeX_HEADER: \bibliography{bibliography}
+#+LaTeX_HEADER: \usepackage{polish}
+#+LaTeX_HEADER: \nocite{*}
+#+LaTeX_HEADER: \bibliographystyle{plplain}
 
 * Problem maksymalnej kliki
-  Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. 
-  Maksymalna klika to klika składająca się z największej liczby wierzchołków. 
-  Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
+  Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. Maksymalna klika to klika składająca się z największej liczby wierzchołków. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
 * Algorytm
   Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \cite{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\cite{jgrapht}.
 * Technologia
