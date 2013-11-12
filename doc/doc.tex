@@ -1,0 +1,52 @@
+% Created 2013-11-12 Tue 19:43
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage[normalem]{ulem}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage{biblatex}
+\bibliography{bibliography}
+\author{Marek Lewandowski, Juliusz Gonera}
+\date{}
+\title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.3.1 (Org mode 8.0.5)}}
+\begin{document}
+
+\maketitle
+
+\section{Problem maksymalnej kliki}
+\label{sec-1}
+Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. 
+Maksymalna klika to klika składająca się z największej liczby wierzchołków. 
+Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
+
+\section{Algorytm}
+\label{sec-2}
+Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \cite{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\cite{jgrapht}.
+
+\section{Technologia}
+\label{sec-3}
+Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
+
+\section{Testy}
+\label{sec-4}
+Do testowania poprawności i empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\cite{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
+
+\printbibliography
+% Emacs 24.3.1 (Org mode 8.0.5)
+\end{document}

@@ -11,7 +11,7 @@
   Maksymalna klika to klika składająca się z największej liczby wierzchołków. 
   Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
 * Algorytm
-  Do zaimplementowania został wybrany algorytm opisany w \cite{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\cite{jgrapht}.
+  Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \cite{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\cite{jgrapht}.
 * Technologia
   Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
 * Testy
