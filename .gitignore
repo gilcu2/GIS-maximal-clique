@@ -31,3 +31,6 @@
 *.xdy
 *.tdo
 target/
+doc-blx.bib
+*.pdf
+doc.run.xml
