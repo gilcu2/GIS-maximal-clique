@@ -22,10 +22,26 @@ Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym sp
 
 \section{Algorytm}
 \label{sec-2}
-Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
+Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
+
+\subsection{Struktury danych}
+
+W algorytmie \ref{basicmc} wykorzystywane są zbiory $Q$ i $Q_{max}$. $Q$ przechowuje wierzchołki aktualnie rozpatrywanej kliki. $Q_{max}$ zawiera wierzchołki największej kliki jaką dotąd udało się znaleźć. $R \subseteq V $ zawiera listę wierzchołków które mogą zostać dodane do $Q$.
+
+\subsection{Opis Algorytmu}
+
+Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia.\algref{basicmc}{skip}
+
+\subsection{Warunek Stopu}
+
+W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką. Jeśli $|Q| \ge |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
+
+\subsection{Złożoność Obliczeniowa}
+
+\subsection{Sytuacje Awaryjne}
 
 \begin{algorithm}
-\caption{BasicMC}
+\caption{BasicMC}\label{basicmc}
 \begin{algorithmic}[1]
   
 \Procedure{BasicMC}{$V,E$}
@@ -39,7 +55,7 @@ Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i uży
 \While{$R \not= \emptyset$}
   \State $p\gets v\in R$
   \If{$|Q|+|R|\ge |Q_{max}|$}
-    \State $Q \gets Q \cup {p}$
+    \State $Q \gets Q \cup {p}$\label{addPToQ}
     \State $R_p \gets R \cap adj(p)$
     \If{$R_p \not= \emptyset$}
       \State \Call{EXPAND}{$R_{P}$}
@@ -48,7 +64,7 @@ Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i uży
     \EndIf
     \State $Q \gets Q - {p}$
   \Else
-    \textbf{ return}
+    \textbf{ return}\label{skip}
   \EndIf
   \State $R \gets R - p$
 \EndWhile
@@ -57,13 +73,21 @@ Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i uży
 \end{algorithmic}
 \end{algorithm}
 
-\section{Technologia}
+\section{Program}
 \label{sec-3}
 Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
+
+Program będzie plikiem wykonywalnym wczytującym reprezentację grafu ze standardowego wejścia i wypisującym żądane informacje na standardowe wyjście.
+
+\subsection{Wejście Programu}
+
+\subsection{Wyjście Programu}
 
 \section{Testy}
 \label{sec-4}
 Do testowania poprawności i empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
+
+\subsection{Projekt Testów}
 
 \nocite{*}
 \bibliographystyle{plainnat}
