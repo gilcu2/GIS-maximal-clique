@@ -7,6 +7,8 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage[numbers]{natbib}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \author{Marek Lewandowski, Juliusz Gonera}
 \date{}
 \title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
@@ -21,6 +23,39 @@ Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym sp
 \section{Algorytm}
 \label{sec-2}
 Do zaimplementowania został wybrany algorytm przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
+
+\begin{algorithm}
+\caption{BasicMC}
+\begin{algorithmic}[1]
+  
+\Procedure{BasicMC}{$V,E$}
+\State $Q\gets \emptyset$;
+\State $Q_{max}\gets \emptyset$;
+\State \Call{EXPAND}{V};
+\EndProcedure
+\Statex
+
+\Procedure{expand}{$R$}
+\While{$R \not= \emptyset$}
+  \State $p\gets v\in R$
+  \If{$|Q|+|R|\ge |Q_{max}|$}
+    \State $Q \gets Q \cup {p}$
+    \State $R_p \gets R \cap adj(p)$
+    \If{$R_p \not= \emptyset$}
+      \State \Call{EXPAND}{$R_{P}$}
+    \ElsIf{$|Q| \ge |Q_{max}|$}
+      \State $Q_{max} \gets Q$
+    \EndIf
+    \State $Q \gets Q - {p}$
+  \Else
+    \textbf{ return}
+  \EndIf
+  \State $R \gets R - p$
+\EndWhile
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
 
 \section{Technologia}
 \label{sec-3}
