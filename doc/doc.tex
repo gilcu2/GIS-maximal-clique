@@ -81,7 +81,40 @@ Program będzie plikiem wykonywalnym wczytującym reprezentację grafu ze standa
 
 \subsection{Wejście Programu}
 
+Wejściem programu są pliki tekstowe ASCII. Wejście zawiera $|E|+1$ linii nie licząc linii zawierających komentarzy. Pierwsza linijka nie będąca komentarzem jest postaci 
+\begin{verbatim}
+p col |V| |E|
+\end{verbatim}
+Gdzie $|V|$ i $|E|$ to odpowiednio liczba węzłów i krawędzi grafu. Następne $|E|$ linijek odpowiada $|E|$ krawędziom grafu. Krawędź $(v, w)$ zapisywana jest jako 
+\begin{verbatim}
+e W V
+\end{verbatim}
+i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
+
+\subsection{Opcje Programu}
+
+Program będzie posiadał opcję która pozwala zmienić algorytm wyszukiwania największej kliki w celu porównania obu algorytmów.
+
+\begin{verbatim}
+-j użyj gotowego algorytmu biblioteki JGraph
+\end{verbatim}
+
+Przykładowe wywołanie programu:
+
+\begin{verbatim}
+./prog < input.txt >> results.txt
+./prog -j < input.txt >> results.txt
+\end{verbatim}
+
 \subsection{Wyjście Programu}
+
+Wyjście programu jest postaci.
+
+\begin{verbatim}
+w(g) TIME
+\end{verbatim}
+Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu.
+
 
 \section{Testy}
 \label{sec-4}
