@@ -28,8 +28,6 @@ Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w
 
 W algorytmie \ref{basicmc} wykorzystywane są zbiory $Q$ i $Q_{max}$. $Q$ przechowuje wierzchołki aktualnie rozpatrywanej kliki. $Q_{max}$ zawiera wierzchołki największej kliki jaką dotąd udało się znaleźć. $R \subseteq V $ zawiera listę wierzchołków które mogą zostać dodane do $Q$.
 
-TODO czy tutaj warto już napisać jakie to będą struktury danych w Scali?
-
 \subsection{Opis Algorytmu}
 
 Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia.\algref{basicmc}{skip}
@@ -43,6 +41,7 @@ W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maks
 Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowanego algorytmu. Faktyczne zachowanie algorytmu w zależności od rozmiaru grafu wejściowego zostanie wyznaczone empirycznie.
 
 \subsection{Złożoność pamięciowa}
+\label{memory_complexity}
 
 Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamięci potrzebnej jest wprost proporcjonalna do liczby wierzchołków grafu. Wynika to bezpośrednio z definicji i sposobu użycia zbiorów $Q$, $Q_{max}$ i $R$.
 
@@ -168,7 +167,7 @@ Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych 
 
 \subsection{Testy złożoności}
 \subsubsection{Złożoność pamięciowa}
-TODO jak testować to, że program potrzebuje tylko tyle pamięci? Olać? Uruchomić dla dużego grafu z małym -Xmx i sprawdzić, że się wywali? Jak szacować to ile ten algorytm pamięci potrzebuje?
+Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów pamięci zużytej przez program dla grafów o różnej wielkości. Oczekiwana złożoność pamięciowa programu to $O(|V|)$ (\ref{memory_complexity}). 
 
 \subsubsection{Złożoność obliczeniowa}
 W celu sprawdzenia, że przewidywana złożoność obliczeniowa jest wartością prawdziwą, zostaną wygenerowne grafy losowe z coraz większą liczbą wierzchołków. Następnie program zostanie uruchomiony dla tych grafów. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić czy wartości empiryczne zgadzają się z planowaną złożonością.
