@@ -168,7 +168,7 @@ Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych 
 Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów pamięci zużytej przez program dla grafów o różnej wielkości. Oczekiwana złożoność pamięciowa programu to $O(|V|)$ (\ref{memory_complexity}). 
 
 \subsubsection{Złożoność obliczeniowa}
-W celu sprawdzenia, że przewidywana złożoność obliczeniowa jest wartością prawdziwą, zostaną wygenerowne grafy losowe z coraz większą liczbą wierzchołków. Następnie program zostanie uruchomiony dla tych grafów. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić czy wartości empiryczne zgadzają się z planowaną złożonością.
+Testy mają na celu empiryczne zmierzenie złożoności obliczeniowej. W tym celu zostaną wygenerowane grafy losowe z różnym prawdopodobieństwem krawędzi i różną liczbą wierzchołków. Dla każdego z wygenerowanych grafów uruchomiony zostanie algorytm. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić złożoność obliczeniową.
 
 \subsection{Testy porównawcze}
 W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
