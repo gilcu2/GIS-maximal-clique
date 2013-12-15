@@ -28,6 +28,8 @@ Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w
 
 W algorytmie \ref{basicmc} wykorzystywane są zbiory $Q$ i $Q_{max}$. $Q$ przechowuje wierzchołki aktualnie rozpatrywanej kliki. $Q_{max}$ zawiera wierzchołki największej kliki jaką dotąd udało się znaleźć. $R \subseteq V $ zawiera listę wierzchołków które mogą zostać dodane do $Q$.
 
+TODO czy tutaj warto już napisać jakie to będą struktury danych w Scali?
+
 \subsection{Opis Algorytmu}
 
 Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia.\algref{basicmc}{skip}
@@ -37,6 +39,13 @@ Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchoł
 W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką. Jeśli $|Q| \ge |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
 
 \subsection{Złożoność Obliczeniowa}
+W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
+
+TODO złożoność obliczeniowa BasicMC
+
+\subsection{Złożoność pamięciowa}
+TODO złożoność pamięciowa Brona-Kerboscha i 
+TODO złożoność pamięciowa BasicMC
 
 \subsection{Sytuacje Awaryjne}
 
@@ -93,18 +102,34 @@ i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji teksto
 
 \subsection{Opcje Programu}
 
-Program będzie posiadał opcję która pozwala zmienić algorytm wyszukiwania największej kliki w celu porównania obu algorytmów.
+\subsubsection{Wybór algorytmu}
+Program będzie posiadał opcję, która pozwala zmienić algorytm wyszukiwania największej kliki w celu porównania obu algorytmów.
 
 \begin{verbatim}
 -j użyj gotowego algorytmu biblioteki JGraph
 \end{verbatim}
-
 Przykładowe wywołanie programu:
 
 \begin{verbatim}
 ./prog < input.txt >> results.txt
+./prog -max 600 < input.txt >> results.txt
 ./prog -j < input.txt >> results.txt
 \end{verbatim}
+
+\subsubsection{Ograniczenie czasowe}
+Program będzie posiadał opcję, która pozwala określić maksymalny czas działania algorytmu.
+
+\begin{verbatim}
+-max N maksymalna liczba sekund na działanie algorytmu
+\end{verbatim}
+Przykładowe wywołanie programu:
+
+\begin{verbatim}
+./prog -max 600 < input.txt >> results.txt
+\end{verbatim}
+
+\subsubsection{Ograniczenia na pamięć}
+Ograniczenia na pamięć można ustawić z poziomu maszyny wirtualnej Javy korzystając z parametru $-Xmx$
 
 \subsection{Wyjście Programu}
 
@@ -115,12 +140,43 @@ w(g) TIME
 \end{verbatim}
 Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu.
 
+\subsection{Sytuacje awaryjne}
+Możliwe sytuacje awaryjne to:
 
-\section{Testy}
+\begin{itemize}
+\item zły format wejścia - program będzie zgłaszał błąd, w przypadku wykrycia niewłaściwego formatu wejściowego
+\item brak pamięci - błąd obsługiwany przez JVM
+\end{itemize}
+
+\section{Projekt testów}
 \label{sec-4}
-Do testowania poprawności i empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
 \subsection{Projekt Testów}
+Projekt testów został podzielony na 3 części, każda odpowiedzialna za inny aspekt programu.
+
+\subsection{Testy funkcjonane}
+Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji pozbawiona jest błędów. W ramach tych testów przetestowane zostaną przypadki:
+
+\begin{itemize}
+\item grafu pustego z różną liczbą wierzchołków - maksymalna klika powinna wynosić $1$
+\item grafu pełnego $K_{n}$ - maksymalna klika wynosi $n$
+\item grafu niespójnego zawierającego podgrafy $K_{n_{1}}$ $K_{n_{2}}$ - maksymalna klika wynosi $max(n_{1}, n_{2})$
+\item grafu, które jest drzewem - maksymalna klika powinna wynosić $2$
+\item kół $W_{n}$ - maksymalna klika powinna wynosić $3$
+\end{itemize}
+
+Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych - zostaną wykonane odpowiednie testy.
+
+\subsection{Testy złożoności}
+\subsubsection{Złożoność pamięciowa}
+TODO jak testować to, że program potrzebuje tylko tyle pamięci? Olać? Uruchomić dla dużego grafu z małym -Xmx i sprawdzić, że się wywali? Jak szacować to ile ten algorytm pamięci potrzebuje?
+
+\subsubsection{Złożoność obliczeniowa}
+W celu sprawdzenia, że przewidywana złożoność obliczeniowa jest wartością prawdziwą, zostaną wygenerowne grafy losowe z coraz większą liczbą wierzchołków. Następnie program zostanie uruchomiony dla tych grafów. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić czy wartości empiryczne zgadzają się z planowaną złożonością.
+
+\subsection{Testy porównawcze}
+W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
+
 
 \nocite{*}
 \bibliographystyle{plainnat}
