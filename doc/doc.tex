@@ -40,12 +40,11 @@ W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką
 
 \subsection{Złożoność Obliczeniowa}
 W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
-
-TODO złożoność obliczeniowa BasicMC
+Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowanego algorytmu. Faktyczne zachowanie algorytmu w zależności od rozmiaru grafu wejściowego zostanie wyznaczone empirycznie.
 
 \subsection{Złożoność pamięciowa}
-TODO złożoność pamięciowa Brona-Kerboscha i 
-TODO złożoność pamięciowa BasicMC
+
+Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamięci potrzebnej jest wprost proporcjonalna do liczby wierzchołków grafu. Wynika to bezpośrednio z definicji i sposobu użycia zbiorów $Q$, $Q_{max}$ i $R$.
 
 \subsection{Sytuacje Awaryjne}
 
