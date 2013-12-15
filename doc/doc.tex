@@ -36,7 +36,7 @@ Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchoł
 
 \subsection{Warunek Stopu}
 
-W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką. Jeśli $|Q| \ge |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
+W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką. Jeśli $|Q| > |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
 
 \subsection{Złożoność Obliczeniowa}
 W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
@@ -63,12 +63,12 @@ TODO złożoność pamięciowa BasicMC
 \Procedure{expand}{$R$}
 \While{$R \not= \emptyset$}
   \State $p\gets v\in R$
-  \If{$|Q|+|R|\ge |Q_{max}|$}
+  \If{$|Q|+|R| > |Q_{max}|$}
     \State $Q \gets Q \cup {p}$\label{addPToQ}
     \State $R_p \gets R \cap adj(p)$
     \If{$R_p \not= \emptyset$}
       \State \Call{EXPAND}{$R_{P}$}
-    \ElsIf{$|Q| \ge |Q_{max}|$}
+    \ElsIf{$|Q| > |Q_{max}|$}
       \State $Q_{max} \gets Q$
     \EndIf
     \State $Q \gets Q - {p}$
