@@ -34,7 +34,7 @@ Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchoł
 
 \subsection{Warunek Stopu}
 
-W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q$ jest maksymalną kliką. Jeśli $|Q| > |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
+W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q_{max}$ jest maksymalną kliką. Jeśli $|Q| > |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
 
 \subsection{Złożoność Obliczeniowa}
 W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
