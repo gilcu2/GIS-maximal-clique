@@ -7,7 +7,7 @@ import org.scalatest.matchers.Matchers
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
  */
-class GraphTest extends FlatSpec with Matchers {
+class GraphTest extends FlatSpec with Matchers with EmptyGraphFixture {
 
   "A Graph" should "allow to add nodes" in {
     val g: UndirectedGraph = Graph.undirected().addNode(Node(1)).addNode(Node(2)).addNode(Node(3))
@@ -35,6 +35,13 @@ class GraphTest extends FlatSpec with Matchers {
     assert(g.adj(Node(2)).size === 0)
     assert(g.adj(Node(3)).size === 0)
     assert(g.adj(Node(4)).size === 0)
+  }
+  
+  "A empty graph" should "have maximal clique of size 1" in {
+    for(n <- 1 to 10) {
+      val g = emptyGraph(n)
+      assert(Graph.maximalClique(g).size == 1)
+    }
   }
 
 }

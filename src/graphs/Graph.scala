@@ -21,6 +21,7 @@ trait Graph {
 }
 
 case class Node(i: Int)
+
 case class Edge(v1: Node, v2: Node)
 
 class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
@@ -32,10 +33,10 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
     val emptyMapOfNodesToAdjacentNodes: Map[V, Set[V]] = (nodes :\ Map[V, Set[V]]())((node, map) => {
       map updated(node, Set[V]())
     })
-    (edges :\ emptyMapOfNodesToAdjacentNodes)( (edge, map) => {
-      val map1 = map updated (edge.v1, map.getOrElse(edge.v1, Set[V]()) + edge.v2)
-      map1 updated(edge.v2, map1.getOrElse(edge.v2, Set[V]()) + edge.v1 )
-    } )
+    (edges :\ emptyMapOfNodesToAdjacentNodes)((edge, map) => {
+      val map1 = map updated(edge.v1, map.getOrElse(edge.v1, Set[V]()) + edge.v2)
+      map1 updated(edge.v2, map1.getOrElse(edge.v2, Set[V]()) + edge.v1)
+    })
   }
 
   private lazy val adjacencyLists = createAdjacencyMap()
@@ -54,5 +55,35 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 object Graph {
 
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
+
+  /**
+   * BasicMC
+   * @param g - undirected graph
+   * @return nodes forming the maximal clique
+   */
+  def maximalClique(g: UndirectedGraph): Set[Node] = {
+    type V = Node
+    var Q = Set[V]()
+    var Qmax = Set[V]()
+
+    def expand(r: Set[V]): Set[V] = {
+      var R = r
+      while (R.nonEmpty) {
+        val p = R.head
+        if (Q.size + R.size > Qmax.size) {
+          Q = Q + p
+          val Rp = R intersect g.adj(p)
+          if (Rp.nonEmpty) expand(Rp)
+          else if (Q.size > Qmax.size) Qmax = Q
+          Q = Q - p
+        }
+        else Qmax
+        R = R - p
+      }
+      Qmax
+    }
+
+    expand(g.V)
+  }
 
 }
