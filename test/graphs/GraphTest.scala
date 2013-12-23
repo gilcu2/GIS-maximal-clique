@@ -28,4 +28,13 @@ class GraphTest extends FlatSpec with Matchers {
     assert(g.adj(Node(2)).size === 1)
   }
 
+  "A vertices in undirected graph" should "be not be adjacent if there is no edge" in {
+    val g = Graph.undirected().addNode(Node(1)).addNode(Node(2)).addNode(Node(3)).addNode(Node(4))
+
+    assert(g.adj(Node(1)).size === 0)
+    assert(g.adj(Node(2)).size === 0)
+    assert(g.adj(Node(3)).size === 0)
+    assert(g.adj(Node(4)).size === 0)
+  }
+
 }
