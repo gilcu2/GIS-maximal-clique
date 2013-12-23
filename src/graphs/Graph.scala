@@ -66,6 +66,11 @@ object Graph {
 
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
 
+  def undirected(edges: Set[Edge]): UndirectedGraph = {
+    val nodes: Set[Node] = edges.flatMap(e => Set(e.v1, e.v2))
+    new UndirectedGraph(nodes, edges)
+  }
+
   implicit val noTimeout = Duration.Inf
 
   /**

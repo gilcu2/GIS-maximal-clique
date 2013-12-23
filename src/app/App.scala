@@ -1,6 +1,9 @@
 package app
 
 import graphs._
+import graphs.Graph._
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -30,8 +33,14 @@ object App extends scala.App {
 
 
   override def main(args: Array[String]): Unit = {
-
     val lines: Iterator[String] = scala.io.Source.stdin.getLines()
     val dimacsGraph: DimacsGraph = readDimacsFormat(lines)
+    val g: UndirectedGraph = Graph.undirected(dimacsGraph.edges)
+    g.adj(Node(dimacsGraph.nodes)) // Trigger building of adjacency list
+    val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+    val clique: Set[Node] = Graph.maximalClique(g)
+    val time: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start
+
+    println(s"graph w(g) TIME\n${dimacsGraph.name} ${clique.size} ${time.toSeconds}")
   }
 }
