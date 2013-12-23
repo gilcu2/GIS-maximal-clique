@@ -1,5 +1,6 @@
 package graphs
 
+import Graph._
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -64,5 +65,19 @@ trait GraphsFixtures {
     }.toSet
 
     new UndirectedGraph(g.V + Node(n), g.E ++ additionalEdges)
+  }
+
+  /**
+   * Simple binary tree with 5 nodes
+   * 1
+   * / \
+   * 2  3
+   * / \
+   * 4   5
+   */
+  def tree: UndirectedGraph = {
+    Graph.undirected().addNode(1).addNode(2).addNode(3)
+      .addNode(4).addNode(5).addEdge((1, 2)).addEdge((1, 3))
+      .addEdge((2, 4)).addEdge((2, 5))
   }
 }

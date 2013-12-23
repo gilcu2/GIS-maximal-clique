@@ -58,7 +58,8 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 object Graph {
 
   implicit def intToNode(i: Int) = Node(i)
-  implicit def tupleToEdge( t: (Int, Int) ) = Edge(t._1, t._2)
+
+  implicit def tupleToEdge(t: (Int, Int)) = Edge(t._1, t._2)
 
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
 
