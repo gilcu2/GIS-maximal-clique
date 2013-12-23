@@ -1,7 +1,11 @@
 package graphs
 
+import scala.language.postfixOps
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.Matchers
+import Graph._
+import scala.concurrent.duration._
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -77,4 +81,11 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(Graph.maximalClique(tree).size === 2)
   }
 
+  "A maximalClique algorithm" should " more or less return within given timeout" in {
+    val start: FiniteDuration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+    // it looks like time needed to build a tree becomes significant in case of larger graphs
+    Graph.maximalClique(completeGraph(1000))(2 seconds)
+    val end: FiniteDuration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+    assert(end - start < Duration(10L, TimeUnit.SECONDS))
+  }
 }

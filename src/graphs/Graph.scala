@@ -1,5 +1,8 @@
 package graphs
 
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
+
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
@@ -63,12 +66,16 @@ object Graph {
 
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
 
+  implicit val noTimeout = Duration.Inf
+
   /**
    * BasicMC
    * @param g - undirected graph
-   * @return nodes forming the maximal clique
+   * @return best clique so far found within given timeout
    */
-  def maximalClique(g: UndirectedGraph): Set[Node] = {
+  def maximalClique(g: UndirectedGraph)(implicit timeout: Duration): Set[Node] = {
+    val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+
     type V = Node
     var Q = Set[V]()
     var Qmax = Set[V]()
@@ -86,6 +93,10 @@ object Graph {
         }
         else Qmax
         R = R - p
+
+        if (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start > timeout) {
+          return Qmax
+        }
       }
       Qmax
     }
