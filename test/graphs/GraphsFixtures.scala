@@ -1,5 +1,6 @@
 package graphs
 
+
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
@@ -52,5 +53,16 @@ trait GraphsFixtures {
       } yield Edge(Node(i), Node(i + 1))
     }.toSet
     new UndirectedGraph(nodes, edges + Edge(Node(1), Node(n)))
+  }
+
+  def circle(n: Int): UndirectedGraph = {
+    require(n >= 4)
+
+    val g: UndirectedGraph = cycle(n - 1)
+    val additionalEdges: Set[Edge] = {
+      for (i <- 1 until n) yield Edge(Node(i), Node(n))
+    }.toSet
+
+    new UndirectedGraph(g.V + Node(n), g.E ++ additionalEdges)
   }
 }
