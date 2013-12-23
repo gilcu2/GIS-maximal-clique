@@ -28,4 +28,12 @@ trait GraphsFixtures {
     }.toSet
     new UndirectedGraph(nodes, edges)
   }
+
+  def disconnectedGraphWithTwoCompleteGraphs(n1: Int, n2: Int) = {
+
+    val g1: UndirectedGraph = completeGraph(n1)
+    val g2: UndirectedGraph = completeGraph(n2)
+
+    new UndirectedGraph(g1.V ++ g2.V, g1.E ++ g2.E)
+  }
 }

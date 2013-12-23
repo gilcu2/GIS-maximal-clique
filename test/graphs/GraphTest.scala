@@ -36,19 +36,25 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(g.adj(Node(3)).size === 0)
     assert(g.adj(Node(4)).size === 0)
   }
-  
+
   "A empty graph" should "have maximal clique of size 1" in {
-    for(n <- 1 to 10) {
+    for (n <- 1 to 10) {
       val g = emptyGraph(n)
       assert(Graph.maximalClique(g).size == 1)
     }
   }
 
   "A complete graph" should "have maximal clique of size equal to the number of nodes" in {
-    for(n <- 1 to 30) {
+    for (n <- 1 to 30) {
       val g = completeGraph(n)
       assert(Graph.maximalClique(g).size == n)
     }
+  }
+
+  "A disconnected graph with two complete graphs" should "have maximal clique of size equal " +
+    "to the number of nodes in bigger complete graph" in {
+    val g = disconnectedGraphWithTwoCompleteGraphs(10, 30)
+    assert(Graph.maximalClique(g).size == 30)
   }
 
 }
