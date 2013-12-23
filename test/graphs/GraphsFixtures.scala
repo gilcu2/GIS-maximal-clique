@@ -1,7 +1,7 @@
 package graphs
 
 /**
- * @author Marek Lewandowski <marek.lewandowski@icompass.pl>
+ * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
  */
 trait GraphsFixtures {
@@ -35,5 +35,22 @@ trait GraphsFixtures {
     val g2: UndirectedGraph = completeGraph(n2)
 
     new UndirectedGraph(g1.V ++ g2.V, g1.E ++ g2.E)
+  }
+
+  def cycle(n: Int): UndirectedGraph = {
+    require(n >= 3)
+
+    val nodes: Set[Node] = {
+      for (i <- 1 to n) yield Node(i)
+    }.toSet
+
+    val edges: Set[Edge] = {
+      for {
+        i <- 1 to n
+        j <- 1 to n
+        if i + 1 <= n
+      } yield Edge(Node(i), Node(i + 1))
+    }.toSet
+    new UndirectedGraph(nodes, edges + Edge(Node(1), Node(n)))
   }
 }

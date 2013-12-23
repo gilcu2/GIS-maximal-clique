@@ -50,9 +50,15 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
   def addEdge(e: E): UndirectedGraph = new UndirectedGraph(nodes, edges + e)
 
   def addNode(node: V): UndirectedGraph = new UndirectedGraph(nodes + node, edges)
+
+  override def equals(obj: scala.Any): Boolean = obj.isInstanceOf[UndirectedGraph] && obj.asInstanceOf[UndirectedGraph].V == this.V &&
+    obj.asInstanceOf[UndirectedGraph].E == this.E
 }
 
 object Graph {
+
+  implicit def intToNode(i: Int) = Node(i)
+  implicit def tupleToEdge( t: (Int, Int) ) = Edge(t._1, t._2)
 
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
 

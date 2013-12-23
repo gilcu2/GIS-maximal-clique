@@ -57,4 +57,11 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(Graph.maximalClique(g).size == 30)
   }
 
+  "A cycle graph" should "have maximal clique of size 1" in {
+    for(i <- 4 to 10) {
+      assert(Graph.maximalClique(cycle(i)).size == 2)
+    }
+
+  }
+
 }
