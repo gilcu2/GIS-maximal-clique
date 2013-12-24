@@ -8,6 +8,8 @@ import org.jgrapht.graph.{DefaultEdge => JGraphTDefaultEdge}
 import org.jgrapht.graph.{SimpleGraph => JGraphTSimpleGraph}
 import java.util.Collection
 import scala.collection.JavaConversions._
+import scala.util.Random
+import scala.collection.immutable.IndexedSeq
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -74,6 +76,8 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 
     g
   }
+
+  override def toString: String = "Nodes" + this.nodes + " Edges" + this.edges
 }
 
 object Graph {
@@ -120,7 +124,7 @@ object Graph {
           if (Rp.nonEmpty) expand(Rp)
           else if (Q.size > Qmax.size) {
             Qmax = Q
-            println("Best found so far: w(g)="+Qmax.size + ". Time elapsed "+ (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s" )
+            println("Best found so far: w(g)=" + Qmax.size + ". Time elapsed " + (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s")
           }
           Q = Q - p
         }
@@ -135,6 +139,23 @@ object Graph {
     }
 
     expand(g.V)
+  }
+
+  def randomUndirectedGraph(n: Int, p: Double): UndirectedGraph = {
+    def createEdge(v1: Int, v2: Int) = if(v1 < v2) Some(Edge(v1, v2)) else if(v2 < v1) Some(Edge(v2, v1)) else None
+    val t = (2 to n).:\((List(Node(1)), Set[Edge]()))((i, t) => (Node(i) :: t._1, {
+      createEdge(t._1(Random.nextInt(t._1.size)).i, i).map(t._2 +).getOrElse(t._2)
+    }))
+    val nodes = t._1
+    val connected: Set[Edge] = t._2
+    val seq: IndexedSeq[Edge] = for {
+      i <- 1 to n
+      j <- 2 to n
+      e <- createEdge(i, j)
+    } yield e
+
+    val edgesToAdd: IndexedSeq[Edge] = seq.filter(_ => Random.nextDouble() <= p )
+    new UndirectedGraph(nodes.toSet, connected ++ edgesToAdd)
   }
 
 }

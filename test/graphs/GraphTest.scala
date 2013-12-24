@@ -95,4 +95,18 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     val end: FiniteDuration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
     assert(end - start < Duration(10L, TimeUnit.SECONDS))
   }
+
+  "A random undirected graph" should "be connected" in {
+    val g = Graph.randomUndirectedGraph(10, 0.5)
+    for (i <- 1 to 10) {
+      assert(g.adj(i).size > 0)
+    }
+  }
+
+  def edgesInGraph(n: Int) = (n * (n - 1)) / 2
+
+  "A random undirected graph with probability of edge equal to 1" should "have high number of edges" in {
+    assert(Graph.randomUndirectedGraph(10, 0.8).E.size <= edgesInGraph(10))
+    assert(Graph.randomUndirectedGraph(10, 0.8).E.size > edgesInGraph(5))
+  }
 }
