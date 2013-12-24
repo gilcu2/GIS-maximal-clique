@@ -118,7 +118,10 @@ object Graph {
           Q = Q + p
           val Rp = R intersect g.adj(p)
           if (Rp.nonEmpty) expand(Rp)
-          else if (Q.size > Qmax.size) Qmax = Q
+          else if (Q.size > Qmax.size) {
+            Qmax = Q
+            println("Best found so far: w(g)="+Qmax.size + ". Time elapsed "+ (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s" )
+          }
           Q = Q - p
         }
         else Qmax

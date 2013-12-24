@@ -33,10 +33,14 @@ object App extends scala.App {
 
 
   override def main(args: Array[String]): Unit = {
+    println("Begin reading stdin")
     val lines: Iterator[String] = scala.io.Source.stdin.getLines()
     val dimacsGraph: DimacsGraph = readDimacsFormat(lines)
+    println("Dimacs graph has been read. Proceeding to build graph")
     val g: UndirectedGraph = Graph.undirected(dimacsGraph.edges)
+    println("Graph has been built. Triggering building of adjacency list")
     g.adj(Node(dimacsGraph.nodes)) // Trigger building of adjacency list
+    println("Adjacency list is done. Begin maximal clique algorithm")
     val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
     val clique: Set[Node] = Graph.maximalClique(g)
     val time: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start
