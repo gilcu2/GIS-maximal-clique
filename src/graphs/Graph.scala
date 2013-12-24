@@ -2,6 +2,12 @@ package graphs
 
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import org.jgrapht.alg.BronKerboschCliqueFinder
+import org.jgrapht.{UndirectedGraph => JGraphTUndirectedGraph}
+import org.jgrapht.graph.{DefaultEdge => JGraphTDefaultEdge}
+import org.jgrapht.graph.{SimpleGraph => JGraphTSimpleGraph}
+import java.util.Collection
+import scala.collection.JavaConversions._
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -56,6 +62,18 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 
   override def equals(obj: scala.Any): Boolean = obj.isInstanceOf[UndirectedGraph] && obj.asInstanceOf[UndirectedGraph].V == this.V &&
     obj.asInstanceOf[UndirectedGraph].E == this.E
+
+  def toJGraphT: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge] = {
+    var g: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge] =
+      new JGraphTSimpleGraph[Node, JGraphTDefaultEdge](classOf[JGraphTDefaultEdge])
+    for (v <- nodes) g.addVertex(v)
+    for (e <- edges) e match {
+      case Edge(v1, v2) => g.addEdge(v1, v2)
+      case _ =>
+    }
+
+    g
+  }
 }
 
 object Graph {
@@ -72,6 +90,13 @@ object Graph {
   }
 
   implicit val noTimeout = Duration.Inf
+
+  def bronKerbosch(g: UndirectedGraph): Set[Node] = {
+    val finder = new BronKerboschCliqueFinder(g.toJGraphT)
+    val c: Collection[java.util.Set[graphs.Node]] =
+      finder.getBiggestMaximalCliques
+    c.iterator().next().toSet
+  }
 
   /**
    * BasicMC

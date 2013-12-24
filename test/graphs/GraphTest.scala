@@ -45,6 +45,7 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     for (n <- 1 to 10) {
       val g = emptyGraph(n)
       assert(Graph.maximalClique(g).size == 1)
+      assert(Graph.bronKerbosch(g).size == 1)
     }
   }
 
@@ -52,6 +53,7 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     for (n <- 1 to 30) {
       val g = completeGraph(n)
       assert(Graph.maximalClique(g).size == n)
+      assert(Graph.bronKerbosch(g).size == n)
     }
   }
 
@@ -59,26 +61,31 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     "to the number of nodes in bigger complete graph" in {
     val g = disconnectedGraphWithTwoCompleteGraphs(10, 30)
     assert(Graph.maximalClique(g).size == 30)
+    assert(Graph.bronKerbosch(g).size == 30)
   }
 
   "A cycle graph" should "have maximal clique of size 1" in {
     for (i <- 4 to 10) {
       assert(Graph.maximalClique(cycle(i)).size === 2)
+      assert(Graph.bronKerbosch(cycle(i)).size === 2)
     }
   }
 
   "A circle graph with more than 4 nodes" should "have maximal clique of size 3" in {
     for (i <- 5 to 10) {
       assert(Graph.maximalClique(circle(i)).size === 3)
+      assert(Graph.bronKerbosch(circle(i)).size === 3)
     }
   }
 
   "A circle graph with 4 nodes" should "have maximal clique of size 4" in {
     assert(Graph.maximalClique(circle(4)).size === 4)
+    assert(Graph.bronKerbosch(circle(4)).size === 4)
   }
 
   "A tree graph" should "have maximal clique of size 2" in {
     assert(Graph.maximalClique(tree).size === 2)
+    assert(Graph.bronKerbosch(tree).size === 2)
   }
 
   "A maximalClique algorithm" should " more or less return within given timeout" in {
