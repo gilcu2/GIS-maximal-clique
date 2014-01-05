@@ -6,13 +6,13 @@ import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import java.lang.Runtime
 import scala.util.Try
+import rx.lang.scala.Observable
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
  */
 object App extends scala.App {
-
   case class DimacsGraph(name: String = "", nodes: Int = -1, totalEdges: Int = -1, edges: Set[Edge] = Set()) {
     def isDefined = edges.nonEmpty
   }
@@ -88,7 +88,7 @@ object App extends scala.App {
       |
       |
       | Example
-      | "-max 30 -j << data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
+      | "-max 30 -j < data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
     """.stripMargin
 
   case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false,
@@ -111,9 +111,9 @@ object App extends scala.App {
   private val printer: (String) => Unit = getProgressPrinter(appOptions.verbose)
 
   if (appOptions.benchmark) {
-    // TODO
+    measureTimeAndMemoryComplexityOfBronKerbosch()
   }
-  else {
+  else if(System.in.available() > 0) {
     printer("Begin reading stdin")
 
     val lines: Iterator[String] = scala.io.Source.stdin.getLines()
@@ -125,23 +125,21 @@ object App extends scala.App {
       printer("Graph has been built. Triggering building of adjacency list")
       g.adj(Node(dimacsGraph.nodes)) // Trigger building of adjacency list
       printer("Adjacency list is done. Begin maximal clique algorithm")
-      val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
 
-      val (clique, time, memory) =
-        if (appOptions.bronKerbosch)
-          measureTimeAndMemory(() => Graph.bronKerbosch(g))
-        else
-          measureTimeAndMemory(() => Graph.maximalClique(g))
-
-      val elapsedTime: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start
-      printer(s"graph w(g) TIME\n${dimacsGraph.name} ${clique.size} ${elapsedTime.toSeconds}")
+      val observable: Observable[CliqueFound] = Graph.findBiggestClique(g, appOptions.bronKerbosch, appOptions.timeout)
+      val list: List[CliqueFound] = observable.toBlockingObservable.toList
+      println(list.mkString("\n"))
     }
     else {
-      println("MISSING INPUT. Expected graph in dimacs format")
+      println("WRONG FORMAT. Expected graph in dimacs format")
       println()
       println(usage)
     }
-
+  }
+  else {
+    println("MISSING INPUT. Expected graph in dimacs format")
+    println()
+    println(usage)
   }
 
 
