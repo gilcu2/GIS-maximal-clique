@@ -126,6 +126,7 @@ object Graph {
       }
       val timer = getTimer
       val memory = getMemory
+
       val progress: (Set[Node] => Unit) = nodes => {
         observer.onNext(CliqueFound(nodes.size, elapsedTime = timer(), memoryInKb = memory()))
       }

@@ -72,7 +72,7 @@ object App extends scala.App {
 
   val usage =
     """ Usage:
-      | [-j] [-max seconds] [-v] [-csv] [-benchmark]
+      | [-j] [-max seconds] [-v] [-csv] [-benchmark] [-progress]
       |
       |
       |
@@ -86,13 +86,15 @@ object App extends scala.App {
       |
       | -benchmark Perform benchmark of algorithms using randomly generated graphs
       |
+      | -progress output intermediate maximal cliques
+      |
       |
       | Example
       | "-max 30 -j < data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
     """.stripMargin
 
   case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false,
-                        verbose: Boolean = false, outputInCSVFormat: Boolean = false)
+                        verbose: Boolean = false, outputInCSVFormat: Boolean = false, showProgress: Boolean = false)
 
   def nextOption(appOptions: AppOptions, remainingArgs: List[String]): AppOptions = {
     remainingArgs match {
@@ -101,25 +103,39 @@ object App extends scala.App {
       case "-v" :: tail => nextOption(appOptions.copy(verbose = true), tail)
       case "-csv" :: tail => nextOption(appOptions.copy(outputInCSVFormat = true), tail)
       case "-benchmark" :: tail => nextOption(appOptions.copy(benchmark = true), tail)
+      case "-progress" :: tail => nextOption(appOptions.copy(showProgress = true), tail)
       case rest => appOptions
     }
   }
 
-  def getProgressPrinter(verbose: Boolean) = (s: String) => if (verbose) println(s)
-
   private val appOptions: AppOptions = nextOption(AppOptions(), args.toList)
-  private val printer: (String) => Unit = getProgressPrinter(appOptions.verbose)
+
 
   if (appOptions.benchmark) {
-    measureTimeAndMemoryComplexityOfBronKerbosch()
+    val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
+    measureTimeAndMemoryComplexity(algorithm)
   }
   else if(System.in.available() > 0) {
+    def getProgressPrinter(verbose: Boolean) = (s: String) => if (verbose) println(s)
+    def getResultPrinter(csvOutput: Boolean, graphName: String, bronKerbosch: Boolean) =
+      (cf: CliqueFound) => if(csvOutput) {
+        val l = graphName :: (if(bronKerbosch) "Bron-Kerbosch" else "BasicMQ") :: cf.size :: cf.elapsedTime :: cf.memoryInKb :: Nil
+        println(l.mkString(","))
+      }
+      else
+        println(s"${cf.size} ${cf.elapsedTime}")
+
+    val printer: (String) => Unit = getProgressPrinter(appOptions.verbose)
+
+
+
     printer("Begin reading stdin")
 
     val lines: Iterator[String] = scala.io.Source.stdin.getLines()
     val dimacsGraph: DimacsGraph = Try(readDimacsFormat(lines)).getOrElse(DimacsGraph())
 
     if (dimacsGraph.isDefined) {
+      val resultPrinter = getResultPrinter(appOptions.outputInCSVFormat, dimacsGraph.name, appOptions.bronKerbosch)
       printer("Dimacs graph has been read. Proceeding to build graph")
       val g: UndirectedGraph = Graph.undirected(dimacsGraph.edges)
       printer("Graph has been built. Triggering building of adjacency list")
@@ -127,17 +143,24 @@ object App extends scala.App {
       printer("Adjacency list is done. Begin maximal clique algorithm")
 
       val observable: Observable[CliqueFound] = Graph.findBiggestClique(g, appOptions.bronKerbosch, appOptions.timeout)
+      if(appOptions.showProgress)
+        observable.subscribe(c => {
+          resultPrinter(c)
+        })
       val list: List[CliqueFound] = observable.toBlockingObservable.toList
-      println(list.mkString("\n"))
+      if(!appOptions.showProgress) {
+        val maximal = list.last
+        resultPrinter(maximal)
+      }
     }
     else {
-      println("WRONG FORMAT. Expected graph in dimacs format")
+      println("ILLEGAL FORMAT! Expected graph in dimacs format")
       println()
       println(usage)
     }
   }
   else {
-    println("MISSING INPUT. Expected graph in dimacs format")
+    println("NO INPUT FOUND! Expected graph in dimacs format on standard input")
     println()
     println(usage)
   }
