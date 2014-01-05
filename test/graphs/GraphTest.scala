@@ -91,7 +91,7 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
   "A maximalClique algorithm" should " more or less return within given timeout" in {
     val start: FiniteDuration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
     // it looks like time needed to build a tree becomes significant in case of larger graphs
-    Graph.maximalClique(completeGraph(1000))(2 seconds)
+    Graph.maximalClique(completeGraph(1000))
     val end: FiniteDuration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
     assert(end - start < Duration(10L, TimeUnit.SECONDS))
   }

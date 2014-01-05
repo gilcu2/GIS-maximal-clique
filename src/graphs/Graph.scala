@@ -1,8 +1,6 @@
 package graphs
 
 import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
-import org.jgrapht.alg.BronKerboschCliqueFinder
 import org.jgrapht.{UndirectedGraph => JGraphTUndirectedGraph}
 import org.jgrapht.graph.{DefaultEdge => JGraphTDefaultEdge}
 import org.jgrapht.graph.{SimpleGraph => JGraphTSimpleGraph}
@@ -10,6 +8,12 @@ import java.util.Collection
 import scala.collection.JavaConversions._
 import scala.util.Random
 import scala.collection.immutable.IndexedSeq
+import rx.lang.scala.Observable
+import rx.lang.scala.subscriptions.Subscription
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.Some
+import extensions.BronKerboschCliqueFinderExtended
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -80,6 +84,8 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
   override def toString: String = "Nodes" + this.nodes + " Edges" + this.edges
 }
 
+case class CliqueFound(size: Long, elapsedTime: Long, memoryInKb: Long)
+
 object Graph {
 
   implicit def intToNode(i: Int) = Node(i)
@@ -93,13 +99,54 @@ object Graph {
     new UndirectedGraph(nodes, edges)
   }
 
-  implicit val noTimeout = Duration.Inf
+  implicit val f: (Set[Node]) => Unit = (s) => ()
 
-  def bronKerbosch(g: UndirectedGraph): Set[Node] = {
-    val finder = new BronKerboschCliqueFinder(g.toJGraphT)
+  def bronKerbosch(g: UndirectedGraph)(implicit f: Set[Node] => Unit): Set[Node] = {
+    val finder = new BronKerboschCliqueFinderExtended(g.toJGraphT)
     val c: Collection[java.util.Set[graphs.Node]] =
-      finder.getBiggestMaximalCliques
+      finder.getBiggestMaximalCliques(f)
     c.iterator().next().toSet
+  }
+
+
+  def findBiggestClique(g: UndirectedGraph, bronKerboschAlgorithm: Boolean, timeout: Duration): Observable[CliqueFound] = {
+    Observable( observer => {
+
+      delay(timeout).onSuccess { case _ => observer.onCompleted() }
+      def getTimer = {
+        val start = System.currentTimeMillis()
+        () => System.currentTimeMillis() - start
+      }
+      def getMemory = {
+        val startMemory = Runtime.getRuntime().freeMemory
+        () => {
+          val endMemory = Runtime.getRuntime().freeMemory
+          (startMemory - endMemory) / 1024
+        }
+      }
+      val timer = getTimer
+      val memory = getMemory
+      val progress: (Set[Node] => Unit) = nodes => {
+        observer.onNext(CliqueFound(nodes.size, elapsedTime = timer(), memoryInKb = memory()))
+      }
+
+      val max: Future[Set[Node]] = if (bronKerboschAlgorithm) Future {
+        bronKerbosch(g)(progress)
+      } else Future {
+        maximalClique(g)(progress)
+      }
+
+      max.onSuccess {
+        case nodes => {
+          progress(nodes)
+          observer.onCompleted()
+        }
+      }
+
+      Subscription {
+        // Do nothing upon
+      }
+    })
   }
 
   /**
@@ -107,8 +154,8 @@ object Graph {
    * @param g - undirected graph
    * @return best clique so far found within given timeout
    */
-  def maximalClique(g: UndirectedGraph)(implicit timeout: Duration): Set[Node] = {
-    val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+  def maximalClique(g: UndirectedGraph)(implicit f: Set[Node] => Unit): Set[Node] = {
+//    val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
 
     type V = Node
     var Q = Set[V]()
@@ -124,16 +171,17 @@ object Graph {
           if (Rp.nonEmpty) expand(Rp)
           else if (Q.size > Qmax.size) {
             Qmax = Q
-            println("Best found so far: w(g)=" + Qmax.size + ". Time elapsed " + (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s")
+//            println("Best found so far: w(g)=" + Qmax.size + ". Time elapsed " + (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s")
+            f(Qmax)
           }
           Q = Q - p
         }
         else Qmax
         R = R - p
 
-        if (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start > timeout) {
-          return Qmax
-        }
+//        if (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start > timeout) {
+//          return Qmax
+//        }
       }
       Qmax
     }
@@ -156,6 +204,30 @@ object Graph {
 
     val edgesToAdd: IndexedSeq[Edge] = seq.filter(_ => Random.nextDouble() <= p )
     new UndirectedGraph(nodes.toSet, connected ++ edgesToAdd)
+  }
+
+  def delay(t: Duration): Future[Unit] = {
+    val p = Promise[Unit]()
+    val n = never[Unit]
+    Future {
+      try {
+        Await.ready(n, t)
+      }
+      catch {
+        case t: TimeoutException => p.success()
+      }
+    }
+
+    p.future
+  }
+
+  /** Returns a future that is never completed.
+    *
+    *  This future may be useful when testing if timeout logic works correctly.
+    */
+  def never[T]: Future[T] = {
+    val p = Promise[T]()
+    p.future
   }
 
 }
