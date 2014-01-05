@@ -149,7 +149,7 @@ object App extends scala.App {
         })
       val list: List[CliqueFound] = observable.toBlockingObservable.toList
       if(!appOptions.showProgress) {
-        val maximal = list.last
+        val maximal = list.headOption.getOrElse(CliqueFound(1,appOptions.timeout.toMillis,0))
         resultPrinter(maximal)
       }
     }
