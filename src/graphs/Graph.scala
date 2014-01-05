@@ -101,6 +101,13 @@ object Graph {
 
   implicit val f: (Set[Node]) => Unit = (s) => ()
 
+  def bronKerboschWithReadyGraph(g: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge])(implicit f: Set[Node] => Unit): Set[Node] = {
+    val finder = new BronKerboschCliqueFinderExtended(g)
+    val c: Collection[java.util.Set[graphs.Node]] =
+      finder.getBiggestMaximalCliques(f)
+    c.iterator().next().toSet
+  }
+
   def bronKerbosch(g: UndirectedGraph)(implicit f: Set[Node] => Unit): Set[Node] = {
     val finder = new BronKerboschCliqueFinderExtended(g.toJGraphT)
     val c: Collection[java.util.Set[graphs.Node]] =
@@ -112,28 +119,30 @@ object Graph {
   def findBiggestClique(g: UndirectedGraph, bronKerboschAlgorithm: Boolean, timeout: Duration): Observable[CliqueFound] = {
     Observable( observer => {
 
-      delay(timeout).onSuccess { case _ => observer.onCompleted() }
-      def getTimer = {
-        val start = System.currentTimeMillis()
-        () => System.currentTimeMillis() - start
+      var startTime = System.currentTimeMillis()
+      var startMemory = Runtime.getRuntime().freeMemory
+      val timer = () => System.currentTimeMillis() - startTime
+      val memory = () => {
+        val endMemory = Runtime.getRuntime().freeMemory
+        (startMemory - endMemory) / 1024
       }
-      def getMemory = {
-        val startMemory = Runtime.getRuntime().freeMemory
-        () => {
-          val endMemory = Runtime.getRuntime().freeMemory
-          (startMemory - endMemory) / 1024
-        }
-      }
-      val timer = getTimer
-      val memory = getMemory
 
       val progress: (Set[Node] => Unit) = nodes => {
         observer.onNext(CliqueFound(nodes.size, elapsedTime = timer(), memoryInKb = memory()))
       }
 
+      def initMetrics() = {
+        delay(timeout).onSuccess { case _ => observer.onCompleted() }
+        startMemory = Runtime.getRuntime().freeMemory
+        startTime = System.currentTimeMillis()
+      }
+
       val max: Future[Set[Node]] = if (bronKerboschAlgorithm) Future {
-        bronKerbosch(g)(progress)
+        val gg = g.toJGraphT
+        initMetrics()
+        bronKerboschWithReadyGraph(gg)(progress)
       } else Future {
+        initMetrics()
         maximalClique(g)(progress)
       }
 
