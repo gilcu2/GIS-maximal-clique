@@ -4,9 +4,17 @@ version := "1.0"
 
 scalaVersion := "2.10.0"
 
+exportJars := true
+
+seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
+
+mainClass in oneJar := Some("app.App")
+
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
 
 libraryDependencies += "org.jgrapht" % "jgrapht-core" % "0.9.0"
+
+libraryDependencies += "com.netflix.rxjava" % "rxjava-scala" % "0.15.0"
 
 libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test",
