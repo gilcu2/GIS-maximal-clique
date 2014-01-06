@@ -20,14 +20,14 @@ object App extends scala.App {
   def readDimacsFormat(lines: Iterator[String]): DimacsGraph = {
     var dimacsGraph = DimacsGraph()
     val EdgeLine = """e (\d*) (\d*)""".r
-    val FileName = """c FILE:\s*(\S*)""".r
+    val FileName = """c (FILE|File):?\s*(\S*)\s*""".r
     val NodesAndEdges = """p col (\d*) (\d*)""".r
     for (line <- lines) {
       line match {
         case EdgeLine(from, to) => {
           dimacsGraph = dimacsGraph.copy(edges = dimacsGraph.edges + Edge(Node(from.toInt), Node(to.toInt)))
         }
-        case FileName(name) => dimacsGraph = dimacsGraph.copy(name = name)
+        case FileName(_, name) => dimacsGraph = dimacsGraph.copy(name = name)
         case NodesAndEdges(nodes, edges) => dimacsGraph = dimacsGraph.copy(nodes = nodes.toInt, totalEdges = edges.toInt)
         case _ =>
       }

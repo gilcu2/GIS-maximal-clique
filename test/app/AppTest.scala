@@ -51,4 +51,21 @@ class AppTest extends FlatSpec with Matchers {
     assert(dimacsGraph.totalEdges === 27984)
     assert(dimacsGraph.edges === Set[Edge]((2, 1), (3, 2), (4, 2), (4, 3), (100, 199)))
   }
+
+  it should "read also different lines with file name" in {
+    val s ="""c File  p_hat700-1.clq
+      |c
+      |c Source: P. Soriano and M. Gendreau at  patrick@crt.umontreal.ca
+      |c
+      |c Reference: p-hat graphs are generated with the p-hat generator
+      |c 	      which is a generalization of the classical uniform
+      |c""".stripMargin
+
+    assert(App.readDimacsFormat(s.lines).name === "p_hat700-1.clq")
+  }
+
+  it should "file name with blank space after" in {
+    val s = "c File  p_hat700-1.clq                "
+    assert(App.readDimacsFormat(s.lines).name === "p_hat700-1.clq")
+  }
 }
