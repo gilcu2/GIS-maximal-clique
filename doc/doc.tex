@@ -1,7 +1,7 @@
 % Created 2013-11-12 Tue 20:00
 \documentclass[12pt, a4paper]{article}
 \usepackage{polski}
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[polish]{babel} 
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -9,6 +9,8 @@
 \usepackage[numbers]{natbib}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{graphicx}
 \author{Marek Lewandowski, Juliusz Gonera}
 \date{}
 \title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
@@ -170,10 +172,115 @@ Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów p
 \subsubsection{Złożoność obliczeniowa}
 Testy mają na celu empiryczne zmierzenie złożoności obliczeniowej. W tym celu zostaną wygenerowane grafy losowe z różnym prawdopodobieństwem krawędzi i różną liczbą wierzchołków. Dla każdego z wygenerowanych grafów uruchomiony zostanie algorytm. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić złożoność obliczeniową.
 
+
+
 \subsection{Testy porównawcze}
 W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
 Przed faktycznym mierzeniem czasu algorytmu dla danego grafu, algorytm zostanie uruchomiony wielokrotnie dla prostego problemu grafowego w celu ,,nagrzania'' JVM. Sam proces rozgrzewania JVM jest potrzebny do tego, aby program dawał wiarygodne wyniki, które nie są zaburzone optymalizacjami kompilatora JIT, takimi jak generowanie natywnego kodu dla często wykonywanych fragmentów kodu.
+
+\section{Instrukcja obsługi programu}
+
+TODO
+
+\section{Przełożenie algorytmu na kod}
+TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jaki sposób)
+TODO algorytm
+
+\section{Porównanie algorytmów}
+Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMQ potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
+
+Zdecydowaliśmy się zatem ograniczyć czas działania algorytmów do 90 sekund na każdy problem i porównać wyniki pomijając fakt, że są one dużo gorsze od najlepszych rozwiązań.
+
+\subsection{Warunki przeprowadzonych testów na zbiorze DIMACS}
+Każdy test został przeprowadzony w następujących warunkach:
+
+\begin{itemize}
+\item Program ma do dyspozycji 2G pamięci
+\item Czas mierzony jest dopiero od momentu uruchomienia algorytmu, a nie programu\footnote{dla niektórych problemów grafowych, samo zbudowanie grafu trwa parę minut}
+\item Algorytm zwraca kolejne coraz lepsze wyniki. Dla każdego wyniku liczony jest czas jego otrzymania.
+\item Końcowym wynikiem jest najlepszy wynik otrzymany w ciągu 90 sekund.\footnote{sytuacja, w której algorytm kończy działanie przed upływem czasu jest obsługiwana, ale w praktyce dla grafów ze zbioru DIMACS nie występuje}
+\item Algorytm uruchamiany jest bez rozgrzewania JVM. Każde uruchomienie jest na tyle długie, że rozgrzewanie jest zbędne.
+\item Program uruchamiany był na procesorze i7 2.6GHz
+\end{itemize}
+
+\subsection{Wyniki testów dla grafów ze zbioru DIMACS}
+Na początku przyjrzymy się wynikom otrzymanym dla każdego z grafów, a następnie na czas otrzymania tego wyniku. Wyniki przedstawione zostały na wykresach \ref{fig:dimacs-best-part1} i \ref{fig:dimacs-best-part2}. 
+
+\subsubsection{Najlepsze rozwiązania}
+Można zauważyć, że dla każdego grafu algorytm BasicMQ daje takie same lub lepsze wyniki przy danych ograniczeniach.
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/dimacs1.pdf}
+  }
+  \end{center}
+  \caption{Najlepszy wynik dla grafów DIMACS w czasie 90 sekund, część 1}
+  \label{fig:dimacs-best-part1}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/dimacs2.pdf}
+  }
+  \end{center}
+  \caption{Najlepszy wynik dla grafów DIMACS w czasie 90 sekund, część 2}
+  \label{fig:dimacs-best-part2}
+\end{figure}
+
+Uruchomienie algorytmu dla grafu MANN\_a81.clq dla algorytmu Brona-Kerboscha spowodowało błąd braku pamięci. Graf ten ma 3321 wierzchołków i 5 506 380 krawędzi. Test został uruchomiony ponownie z 4G pamięci. Przy ponownym uruchomieniu algorytm wykonał się poprawnie, ale nie zwrócił żadnych wyników - żadna klika nie została znaleziona w czasie 90 sekund działania algorytmu.
+
+\subsubsection{Czas dla najlepszych rozwiązań}
+TODO prawdopodobnie porównywanie czasów dla różnych najlepszych wyników to nie jest najlepsze rozwiązanie, bo gorszy algorytm czyli Bron-Kerbosch pokazuje lepsze czasy ale są to czasy dla gorszych wyników. Trzeba pobawić się trochę R i wybrać odpowiednie wyniki.
+
+Wyniki przedstawione zostały na wykresach \ref{fig:dimacs-best-time-part1} i \ref{fig:dimacs-best-time-part2}. Na wykresie, dla niektórych grafów widzimy bardzo niskie czasy. Nie oznacza to jedak, że algorytm znalazł optymalne rozwiązanie w krótkim czasie. Oznacza to, że algorytm znalazł jedno rozwiązanie dość szybko, a potem nie mógł znaleźć żadnego lepszego rozwiązania w ciągu kolejnych 90 sekund. Dotyczy to grafów 
+p\_hat300\_1.clq, p\_hat1500-1.clq, gen200\_p0.9\_44, brock200\_2.b, DSJC500. W niektórych przypadkach dotyczy to tylko algorytmu Brona-Kerboscha np. dla grafu C500.9.clq algorytm BasicMQ znalazł lepsze rozwiązanie przed końcem czasu.
+
+
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/dimacs1czas.pdf}
+  }
+  \end{center}
+  \caption{Czas osiągnięcia wyniku dla grafów DIMACS w czasie 90 sekund, część 1}
+  \label{fig:dimacs-best-time-part1}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/dimacs2czas.pdf}
+  }
+  \end{center}
+  \caption{Czas osiągnięcia wyniku dla grafów DIMACS w czasie 90 sekund, część 2}
+  \label{fig:dimacs-best-time-part2}
+\end{figure}
+
+
+\subsection{Szybkość znajdowania kolejnych rozwiązań}
+Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozostałe warunki testowe są takie same. Program uruchomiony został z opcją wyświetlania coraz lepszych wyników. Wykres \ref{fig:ProgressC125.9-20min} przedstawia wyniki tego testu. Można zauważyć kilka ciekawych rzeczy. Po pierwsze algorytm BasicMQ zdążył znaleźć lepszy wynik. Najlepszy wynik znaleziony przez algorytm Brona-Kerboscha został znaleziony przez algorytm BasicMQ w czasie o rząd wielkości mniejszym. Widać tutaj także regularność - BasicMQ znajduje rozwiązania szybciej od algorytmu Brona-Kerboscha dla tego typu grafu.
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/progress.pdf}
+  }
+  \end{center}
+  \caption{Kolejne wyniki w czasie dla grafu C125.9 z ograniczeniem 20 minut}
+  \label{fig:ProgressC125.9-20min}
+\end{figure}
+
+\section{Badanie złożoności}
+
+TODO
+
+\section{Testy kodu TODO lepsza nazwa}
+
+TODO pokazać, że to co napisaliśmy, że będziemy testować zostało przetestowane i działa. Screen z uruchomienia sbt test?
 
 
 \nocite{*}
