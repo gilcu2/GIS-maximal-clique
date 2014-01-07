@@ -200,6 +200,8 @@ object Graph {
   }
 
   def randomUndirectedGraph(n: Int, p: Double): UndirectedGraph = {
+    def edgesInGraph(n: Int) = (n * (n - 1)) / 2
+    def expectedQ(n: Int, p: Double) = p * edgesInGraph(n)
     def createEdge(v1: Int, v2: Int) = if(v1 < v2) Some(Edge(v1, v2)) else if(v2 < v1) Some(Edge(v2, v1)) else None
     val t = (2 to n).:\((List(Node(1)), Set[Edge]()))((i, t) => (Node(i) :: t._1, {
       createEdge(t._1(Random.nextInt(t._1.size)).i, i).map(t._2 +).getOrElse(t._2)
@@ -212,7 +214,7 @@ object Graph {
       e <- createEdge(i, j)
     } yield e
 
-    val edgesToAdd: IndexedSeq[Edge] = seq.filter(_ => Random.nextDouble() <= p )
+    val edgesToAdd: IndexedSeq[Edge] = seq.filter(e => !(connected.contains(Edge(e.v1, e.v2)) || connected.contains(Edge(e.v2, e.v1)))).filter(_ => Random.nextDouble() <= p ).take((expectedQ(n, p) - connected.size).toInt)
     new UndirectedGraph(nodes.toSet, connected ++ edgesToAdd)
   }
 

@@ -109,4 +109,11 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(Graph.randomUndirectedGraph(10, 0.8).E.size <= edgesInGraph(10))
     assert(Graph.randomUndirectedGraph(10, 0.8).E.size > edgesInGraph(5))
   }
+
+  "A random undirected graph" should "have more of less expected number of edges" in {
+    def expectedQ(n: Int, p: Double) = p * edgesInGraph(n)
+    val qs = { for(i <- 1 to 50000) yield Graph.randomUndirectedGraph(10, 0.8).E.size }.toList
+    assert(qs.exists( q => q <= expectedQ(10, 0.82) && q >= expectedQ(10, 0.78)))
+
+  }
 }
