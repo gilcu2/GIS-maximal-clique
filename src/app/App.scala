@@ -49,14 +49,14 @@ object App extends scala.App {
   }
 
   case class BenchmarkResult(n: Int, avgDuration: Double, avgMemory: Double)
-  def measureTimeAndMemoryComplexity(applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
+  def measureTimeAndMemoryComplexity(appOptions: AppOptions, applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
     var results = scala.collection.mutable.MutableList[BenchmarkResult]()
-    for (n <- 10 to 40) {
+    for (n <- 10 to appOptions.benchmarkMaxNodes) {
       val sampleSize = 4
       var durationSum: Long = 0
       var memorySum: Long = 0
       for (j <- 1 to sampleSize) {
-        val g = Graph.randomUndirectedGraph(n, 0.8)
+        val g = Graph.randomUndirectedGraph(n, appOptions.probabilityOfEdge)
         val (result, duration, memory) = measureTimeAndMemory(() => applyAlgorithm(g))
         durationSum += duration
         memorySum += memory
@@ -71,13 +71,9 @@ object App extends scala.App {
     results.toList
   }
 
-  def measureTimeAndMemoryComplexityOfBronKerbosch() = {
-    measureTimeAndMemoryComplexity(g => Graph.bronKerbosch(g))
-  }
-
   val usage =
     """ Usage:
-      | [-j] [-max seconds] [-v] [-csv] [-benchmark] [-progress]
+      | [-j] [-max seconds] [-v] [-csv] [-benchmark maxNodes probabilityOfEdge] [-progress]
       |
       |
       |
@@ -89,7 +85,7 @@ object App extends scala.App {
       |
       | -csv Output results in csv like format
       |
-      | -benchmark Perform benchmark of algorithms using randomly generated graphs
+      | -benchmark maxNodes probabilityOfEdge Perform benchmark of algorithms using randomly generated graphs
       |
       | -progress output intermediate maximal cliques
       |
@@ -98,8 +94,8 @@ object App extends scala.App {
       | "-max 30 -j < data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
     """.stripMargin
 
-  case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false,
-                        verbose: Boolean = false, outputInCSVFormat: Boolean = false, showProgress: Boolean = false)
+  case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false, benchmarkMaxNodes: Int = 40,
+                        probabilityOfEdge : Double = 0.8, verbose: Boolean = false, outputInCSVFormat: Boolean = false, showProgress: Boolean = false)
 
   def nextOption(appOptions: AppOptions, remainingArgs: List[String]): AppOptions = {
     remainingArgs match {
@@ -107,7 +103,7 @@ object App extends scala.App {
       case "-max" :: timeoutInSeconds :: tail => nextOption(appOptions.copy(timeout = Duration(timeoutInSeconds.toInt, TimeUnit.SECONDS)), tail)
       case "-v" :: tail => nextOption(appOptions.copy(verbose = true), tail)
       case "-csv" :: tail => nextOption(appOptions.copy(outputInCSVFormat = true), tail)
-      case "-benchmark" :: tail => nextOption(appOptions.copy(benchmark = true), tail)
+      case "-benchmark" :: maxN :: probabilityOfEdge :: tail => nextOption(appOptions.copy(benchmark = true, benchmarkMaxNodes = maxN.toInt,probabilityOfEdge =  probabilityOfEdge.toDouble), tail)
       case "-progress" :: tail => nextOption(appOptions.copy(showProgress = true), tail)
       case rest => appOptions
     }
@@ -118,7 +114,7 @@ object App extends scala.App {
 
   if (appOptions.benchmark) {
     val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
-    val results = measureTimeAndMemoryComplexity(algorithm)
+    val results = measureTimeAndMemoryComplexity(appOptions, algorithm)
     val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
     println(printableResults.map(_.mkString(",")).mkString("\n"))
   }
