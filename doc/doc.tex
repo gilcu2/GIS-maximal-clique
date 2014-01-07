@@ -87,65 +87,7 @@ Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany j
 
 Program będzie plikiem wykonywalnym wczytującym reprezentację grafu ze standardowego wejścia i wypisującym żądane informacje na standardowe wyjście.
 
-\subsection{Wejście Programu}
 
-Wejściem programu są pliki tekstowe ASCII. Wejście zawiera $|E|+1$ linii nie licząc linii zawierających komentarzy. Pierwsza linijka nie będąca komentarzem jest postaci 
-\begin{verbatim}
-p col |V| |E|
-\end{verbatim}
-Gdzie $|V|$ i $|E|$ to odpowiednio liczba węzłów i krawędzi grafu. Następne $|E|$ linijek odpowiada $|E|$ krawędziom grafu. Krawędź $(v, w)$ zapisywana jest jako 
-\begin{verbatim}
-e W V
-\end{verbatim}
-i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
-
-\subsection{Opcje Programu}
-
-\subsubsection{Wybór algorytmu}
-Program będzie posiadał opcję, która pozwala zmienić algorytm wyszukiwania największej kliki w celu porównania obu algorytmów.
-
-\begin{verbatim}
--j użyj gotowego algorytmu biblioteki JGraph
-\end{verbatim}
-Przykładowe wywołanie programu:
-
-\begin{verbatim}
-./prog < input.txt >> results.txt
-./prog -max 600 < input.txt >> results.txt
-./prog -j < input.txt >> results.txt
-\end{verbatim}
-
-\subsubsection{Ograniczenie czasowe}
-Program będzie posiadał opcję, która pozwala określić maksymalny czas działania algorytmu.
-
-\begin{verbatim}
--max N maksymalna liczba sekund na działanie algorytmu
-\end{verbatim}
-Przykładowe wywołanie programu:
-
-\begin{verbatim}
-./prog -max 600 < input.txt >> results.txt
-\end{verbatim}
-
-\subsubsection{Ograniczenia na pamięć}
-Ograniczenia na pamięć można ustawić z poziomu maszyny wirtualnej Javy korzystając z parametru $-Xmx$
-
-\subsection{Wyjście Programu}
-
-Wyjście programu jest postaci.
-
-\begin{verbatim}
-w(g) TIME
-\end{verbatim}
-Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu.
-
-\subsection{Sytuacje awaryjne}
-Możliwe sytuacje awaryjne to:
-
-\begin{itemize}
-\item zły format wejścia - program będzie zgłaszał błąd, w przypadku wykrycia niewłaściwego formatu wejściowego
-\item brak pamięci - błąd obsługiwany przez JVM
-\end{itemize}
 
 \section{Projekt testów}
 \label{sec-4}
@@ -205,7 +147,7 @@ Poniższa instrukcja powinna w kompletny sposób zapoznać użytkownika z tym ja
 java -jar gis-maximal-clique.jar
 \end{verbatim}
 
-Jako, że niektóre grafy są dość duże warto zwiększyć maksymalną ilość pamięci dostępną dla programu. 2G pamięci były wystarczające dla większości grafów ze zbioru DIMACs. Należy wtedy uruchomić program w następujący sposób:
+Jako, że niektóre grafy są dość duże warto zwiększyć maksymalną ilość pamięci dostępną dla programu. 2G pamięci były wystarczające dla większości grafów ze zbioru DIMACS. Należy wtedy uruchomić program w następujący sposób:
 
 \begin{verbatim}
 java -Xmx2G -jar gis-maximal-clique.jar
@@ -217,6 +159,18 @@ Program oczekuje danych na standardowym wejściu. Danymi jest graf w formacie DI
 \begin{verbatim}
 java -Xmx2G -jar gis-maximal-clique.jar < graf
 \end{verbatim}
+
+\subsubsection{Format DIMACS}
+
+Wejściem programu są pliki tekstowe ASCII. Wejście zawiera $|E|+1$ linii nie licząc linii zawierających komentarzy. Pierwsza linijka nie będąca komentarzem jest postaci 
+\begin{verbatim}
+p col |V| |E|
+\end{verbatim}
+Gdzie $|V|$ i $|E|$ to odpowiednio liczba węzłów i krawędzi grafu. Następne $|E|$ linijek odpowiada $|E|$ krawędziom grafu. Krawędź $(v, w)$ zapisywana jest jako 
+\begin{verbatim}
+e W V
+\end{verbatim}
+i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
 
 \subsection{Opcje programu}
 Dostępne opcje można zobaczyć poprzez uruchomienie programu bez żadnych dodatkowych argumentów i bez podawania danych wejściowych. Opcje opisane zostały także poniżej.
