@@ -11,6 +11,7 @@
 \usepackage{algpseudocode}
 \usepackage{float}
 \usepackage{graphicx}
+\usepackage{listings}
 \author{Marek Lewandowski, Juliusz Gonera}
 \date{}
 \title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
@@ -179,9 +180,102 @@ W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS B
 
 Przed faktycznym mierzeniem czasu algorytmu dla danego grafu, algorytm zostanie uruchomiony wielokrotnie dla prostego problemu grafowego w celu ,,nagrzania'' JVM. Sam proces rozgrzewania JVM jest potrzebny do tego, aby program dawał wiarygodne wyniki, które nie są zaburzone optymalizacjami kompilatora JIT, takimi jak generowanie natywnego kodu dla często wykonywanych fragmentów kodu.
 
-\section{Instrukcja obsługi programu}
+\section{TODO dokumetacja końcowa}
+To co musimy zrobić to:
+\begin{itemize}
+\item przeredagować to co było wcześniej, tak żeby nie powtarzać tej treści 1 do 1, ale żeby najbardziej kluczowe elementy były zawarte
+\item reszta TODO poniżej
+\end{itemize}
 
-TODO
+\section{Artefakty projetkowe}
+Razem ze sprawozdaniem dostarczone zostały następujące aretefakty projektowe:
+\begin{itemize}
+\item Gotowy wykonywalny program gis-maximal-clique.jar
+\item Kod źródłowy programu
+\item Wyniki z uruchomienia programu na grafach ze zbioru DIMACS TODO nazwa plików
+\item Wyniki z testowania złożoności pamięciowej i czasowej TODO nazwa pliku
+\item Automatycznie wygenerowana dokumentacja dla programisty
+\item TODO coś jeszcze?
+\end{itemize}
+
+\section{Instrukcja obsługi programu}
+Poniższa instrukcja powinna w kompletny sposób zapoznać użytkownika z tym jak program uruchamiać i jakie ma możliwości. Dostarczony program to typowa aplikacja CLI. Program wykonuje się na wirtualnej maszynie Javy. Program uruchamiany był na JVM w wersji 1.7. Program należy uruchamiać z linii poleceń w standardowy sposób dla programów Javowych, mianowicie:
+
+\begin{verbatim}
+java -jar gis-maximal-clique.jar
+\end{verbatim}
+
+Jako, że niektóre grafy są dość duże warto zwiększyć maksymalną ilość pamięci dostępną dla programu. 2G pamięci były wystarczające dla większości grafów ze zbioru DIMACs. Należy wtedy uruchomić program w następujący sposób:
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar
+\end{verbatim}
+
+\subsection{Dane wejściowe}
+Program oczekuje danych na standardowym wejściu. Danymi jest graf w formacie DIMACS. W środowisku linux korzystamy z operatora przekierowania w następujący sposób:
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar < graf
+\end{verbatim}
+
+\subsection{Opcje programu}
+Dostępne opcje można zobaczyć poprzez uruchomienie programu bez żadnych dodatkowych argumentów i bez podawania danych wejściowych. Opcje opisane zostały także poniżej.
+
+\subsection{Wybór algorytmu}
+Domyślnie program korzysta z algorytmu BasicMC. Aby skorzystać z algorytmu Brona-Kerboscha należy dodać argument $-j$
+
+\subsection{Ograniczenia czasowe}
+Domyślnie program działa bez ograniczenia czasowego. Mając na uwadze złożoność problemu, program może wykonywać się bardzo długo szczególnie dla dużych grafów. Można ograniczyć działanie algorytmu poprzez podanie argumentu \emph{\text{-max sekundy}} podając odpowiednią liczbę sekund.
+
+Ograniczenie to dotyczy czasu działania \emph{algorytmu}, a nie \emph{programu}. Dla dużych grafów i krótkich czasów budowanie grafu może zająć dużo czasu, znacznie więcej niż podane ograniczenie. Ograniczenie dotyczy tylko działania algorytmu, a zatem program zakończy się po czasie nie większym niż potrzebnym na załadowanie i zbudowanie grafu dodając do tego ograniczenie w sekundach.
+
+\subsection{Wyniki cząstkowe}
+Domyślnie program wyświetla tylko najlepsze znalezione rozwiązanie. Korzystając z opcji $-progress$ program będzie wyświetlał na bieżąco kolejne najlepsze rozwiązania.
+
+\subsection{Formatowanie}
+Domyślnie program wyświetla wyniki w poniższym formacie:
+
+\begin{verbatim}
+w(g) TIME
+\end{verbatim}
+Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu w milisekundach.
+
+Korzystając z opcji $-csv$ program będzie wyświetlał wynik w formacie CSV z większa ilością informacji. Kolejne kolumny to:
+\begin{verbatim}
+Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY
+\end{verbatim}
+
+gdzie $\text{MEMORY}$ to zużyta pamięć w kB.
+
+\subsection{Tryb benchmark}
+Program można włączyć w trybie benchmark. Będzie wtedy testował dany algorytm na losowo wygenerowanym spójnym grafie nieskierowanym z zadanymi parameterami. Aby włączyć program w tym trybie należy podać argument z dwiema wartościami \emph{\text{-benchmark N p}} gdzie $N$ to maksymalna liczba wierzchołków w losowo wygenerowanym grafie, a $p$ to prawdopodobieństwo wystąpienia krawędzi. $N$ powinno być większe od 10.
+
+Opcja benchmark łączy się tylko z wyborem algorytmu. Pozostałe argumenty są pomijane. Format wyjściowy to CSV.
+
+\subsubsection{Działanie trybu benchmark}
+W tym trybie wybrany algorytm wykonywany jest na coraz większych grafach losowych. Zaczynając od 10 wierzchołków, aż do podanego w opcji $N$ budowane są losowe grafy z prawdopodobieństwem krawędzi $p$. Mierzony jest czas wykonania algorytmu oraz zużyta pamięć. Dla każdego pośredniego rozmiaru algorytm wykonywany jest kilkukrotnie. Wyniki są agregowane i uśredniane. Następnie zaczyna się testowanie na większym losowym grafie, aż do osiągnięcia podanego $N$.
+
+\subsection{Przykłady}
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar -max 90 -progress -csv < data/graph
+\end{verbatim}
+Uruchamia program z ograniczeniem czasowym 90 sekund korzystając z algorytmu BasicMC wyświetlając wyniki pośrednie w formacie CSV dla grafu w formacie dimacs dostępnego pod ścieżką data/graph.
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar -max 30 -j < data/graph 
+\end{verbatim}
+Uruchamia program z ograniczeniem czasowym 30 sekund korzystając z algorytmu Brona-Kerboscha dla grafu w formacie dimacs dostępnego pod ścieżką data/graph
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar -benchmark 100 0.9
+\end{verbatim}
+Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 100 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
+
+\begin{verbatim}
+java -Xmx2G -jar gis-maximal-clique.jar  -benchmark 50 0.7 -j
+\end{verbatim}
+Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 50 z prawdopodobieństwem wystąpienia krawędzi 0.7 korzystając z algorytmu Brona-Kerboscha.
 
 \section{Przełożenie algorytmu na kod}
 TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jaki sposób)
