@@ -7,6 +7,8 @@ import scala.collection.JavaConversions._
 import scala.util.Try
 
 /**
+ * Enriches standard BronKerboschCliqueFinder with progress reporting capabilities
+ *
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 1/5/14
  */
@@ -23,6 +25,12 @@ class BronKerboschCliqueFinderExtended[V, E](graph: JGraphTGraph[V, E]) extends 
     }
   }
 
+  /**
+   * Runs Bron-Kerbosch algorithm for graph and reports progress to given function.
+   *
+   * @param progress function used to report progress
+   * @return set of nodes consisting of maximal clique
+   */
   def getBiggestMaximalCliques(progress: Set[V] => Unit) = {
     progressFunc = progress
     super.getBiggestMaximalCliques

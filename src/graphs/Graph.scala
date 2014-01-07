@@ -16,6 +16,10 @@ import scala.Some
 import extensions.BronKerboschCliqueFinderExtended
 
 /**
+ * Generic Graph type where node can have any type V and edge have any type E
+ *
+ * This is functional data structure. Each modification operation yields new graph.
+ *
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
  * @since 12/23/13
  */
@@ -35,10 +39,31 @@ trait Graph {
 
 }
 
+/**
+ * Concrete type V, here it is simple wrapper around Int
+ * @param i node number (as defined by DIMACS)
+ */
 case class Node(i: Int)
 
+/**
+ * Concrete type E, here it is unweighted, undirected edge
+ * @param v1 first node
+ * @param v2 second node
+ */
 case class Edge(v1: Node, v2: Node)
 
+/**
+ * UndirectedGraph definition, concrete implementation of [[graphs.Graph]] where [[graphs.Graph.E]] is [[graphs.Edge]] and
+ * [[graphs.Graph.V]] is [[graphs.Node]]
+ *
+ * UndirectedGraph is defined by two sets. Set of nodes and set of edges.
+ * UndirectedGraph builds lazily adjacency lists (using map data structure for fast access given some node).
+ * This means that adjacency list is only built the first time it is required so that upon construction of bigger and bigger
+ * graphs has no overhead in repeated calculations. There is only single calculation on done graph.
+ *
+ * @param nodes set of nodes in the graph
+ * @param edges set of nodes in the graph
+ */
 class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 
   type E = Edge
@@ -56,19 +81,25 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 
   private lazy val adjacencyLists = createAdjacencyMap()
 
+  /** Returns set of nodes adjacent to node v */
   def adj(v: V): Set[V] = adjacencyLists.getOrElse(v, Set[V]())
 
+  /** Returns set of edges in this graph */
   def E: Set[E] = edges
 
+  /** Returns set of nodes in this graph */
   def V: Set[V] = nodes
 
+  /** Returns new graph with added Edge e */
   def addEdge(e: E): UndirectedGraph = new UndirectedGraph(nodes, edges + e)
 
+  /** Returns new graph with added Node node */
   def addNode(node: V): UndirectedGraph = new UndirectedGraph(nodes + node, edges)
 
   override def equals(obj: scala.Any): Boolean = obj.isInstanceOf[UndirectedGraph] && obj.asInstanceOf[UndirectedGraph].V == this.V &&
     obj.asInstanceOf[UndirectedGraph].E == this.E
 
+  /** Returns graph in format required by JGraphT library */
   def toJGraphT: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge] = {
     var g: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge] =
       new JGraphTSimpleGraph[Node, JGraphTDefaultEdge](classOf[JGraphTDefaultEdge])
@@ -84,30 +115,51 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
   override def toString: String = "Nodes" + this.nodes + " Edges" + this.edges
 }
 
+/**
+ * Result holder for each clique
+ * @param size Size of the clique found
+ * @param elapsedTime Time elapsed in milliseconds
+ * @param memoryInKb Memory used in kB
+ */
 case class CliqueFound(size: Long, elapsedTime: Long, memoryInKb: Long)
 
 object Graph {
 
+  /** Implicit conversion from Int to Node */
   implicit def intToNode(i: Int) = Node(i)
 
+  /** Implicit conversion from Tuple of ints to Edge */
   implicit def tupleToEdge(t: (Int, Int)) = Edge(t._1, t._2)
 
+  /** Returns new empty undirected graph */
   def undirected(): UndirectedGraph = new UndirectedGraph(Set(), Set())
 
+  /** Returns undirected graph with nodes and edges defined by given edges  */
   def undirected(edges: Set[Edge]): UndirectedGraph = {
     val nodes: Set[Node] = edges.flatMap(e => Set(e.v1, e.v2))
     new UndirectedGraph(nodes, edges)
   }
 
+  /** Implicit no-op progress function */
   implicit val f: (Set[Node]) => Unit = (s) => ()
 
+  /**
+   * Runs Bron-Kerbosch algorithm on ready to go graph (graph in JGraphT format)
+   *
+   * @param g graph in JGrapT format
+   * @param f progress function
+   * @return set of nodes consisting of maximal clique
+   */
   def bronKerboschWithReadyGraph(g: JGraphTUndirectedGraph[Node, JGraphTDefaultEdge])(implicit f: Set[Node] => Unit): Set[Node] = {
     val finder = new BronKerboschCliqueFinderExtended(g)
     val c: Collection[java.util.Set[graphs.Node]] =
       finder.getBiggestMaximalCliques(f)
     c.iterator().next().toSet
   }
-
+  /** Runs Bron-Kerbosch algorithm on UndirectedGraph
+    *
+    * Does conversion and runs algorithm
+    * */
   def bronKerbosch(g: UndirectedGraph)(implicit f: Set[Node] => Unit): Set[Node] = {
     val finder = new BronKerboschCliqueFinderExtended(g.toJGraphT)
     val c: Collection[java.util.Set[graphs.Node]] =
@@ -115,7 +167,26 @@ object Graph {
     c.iterator().next().toSet
   }
 
-
+  /**
+   * Runs algorithm on given graph and returns [[rx.lang.scala.Observable]] of results.
+   *
+   * * This method returns immediately. All the work is done in the background threads. Each next-best result is returned.
+   * Refer to documentation on Observables for more context what it is.
+   *
+   * Use it like this:
+   * {{{
+   *   val observable: Observable[CliqueFound] = Graph.findBiggestClique(g, false, timeout)
+      observable.subscribe(clique => {
+          // code to execute on next clique found
+          resultPrinter(clique)
+      })
+   * }}}
+   *
+   * @param g graph to run algorithm on
+   * @param bronKerboschAlgorithm if true then Bron-Kerbosch algorithm is used, BasicMC otherwise
+   * @param timeout timeout for algorithm. After that there are no more results and Observable is completed
+   * @return
+   */
   def findBiggestClique(g: UndirectedGraph, bronKerboschAlgorithm: Boolean, timeout: Duration): Observable[CliqueFound] = {
     Observable( observer => {
 
@@ -160,13 +231,12 @@ object Graph {
   }
 
   /**
-   * BasicMC
-   * @param g - undirected graph
-   * @return best clique so far found within given timeout
+   * BasicMC algorithm
+   * @param g graph to perform algorithm on
+   * @param f function to which progress should be reported
+   * @return set of nodes consisting of maximal clique
    */
   def maximalClique(g: UndirectedGraph)(implicit f: Set[Node] => Unit): Set[Node] = {
-//    val start: Duration = Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-
     type V = Node
     var Q = Set[V]()
     var Qmax = Set[V]()
@@ -181,17 +251,12 @@ object Graph {
           if (Rp.nonEmpty) expand(Rp)
           else if (Q.size > Qmax.size) {
             Qmax = Q
-//            println("Best found so far: w(g)=" + Qmax.size + ". Time elapsed " + (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start).toSeconds + "s")
             f(Qmax)
           }
           Q = Q - p
         }
         else Qmax
         R = R - p
-
-//        if (Duration(System.currentTimeMillis(), TimeUnit.MILLISECONDS) - start > timeout) {
-//          return Qmax
-//        }
       }
       Qmax
     }
@@ -199,6 +264,13 @@ object Graph {
     expand(g.V)
   }
 
+  /**
+   * Returns random undirected graph with specified properties
+   *
+   * @param n number of nodes
+   * @param p probability of the edge
+   * @return connected UndirectedGraph with number of edges very close to expected value
+   */
   def randomUndirectedGraph(n: Int, p: Double): UndirectedGraph = {
     def edgesInGraph(n: Int) = (n * (n - 1)) / 2
     def expectedQ(n: Int, p: Double) = p * edgesInGraph(n)
@@ -218,7 +290,8 @@ object Graph {
     new UndirectedGraph(nodes.toSet, connected ++ edgesToAdd)
   }
 
-  def delay(t: Duration): Future[Unit] = {
+  /** Private utility method which allows to define future that should be satisifed after some delay */
+  private def delay(t: Duration): Future[Unit] = {
     val p = Promise[Unit]()
     val n = never[Unit]
     Future {
@@ -237,7 +310,7 @@ object Graph {
     *
     *  This future may be useful when testing if timeout logic works correctly.
     */
-  def never[T]: Future[T] = {
+  private def never[T]: Future[T] = {
     val p = Promise[T]()
     p.future
   }

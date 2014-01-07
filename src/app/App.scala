@@ -7,17 +7,42 @@ import java.util.concurrent.TimeUnit
 import java.lang.Runtime
 import scala.util.Try
 import rx.lang.scala.Observable
-import scala.collection.mutable
 
-/**
- * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
- * @since 12/23/13
- */
+/** Main entry point to the application. Reads program arguments and acts accordingly.
+  *
+  *
+  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
+  * @since 12/23/13
+  */
 object App extends scala.App {
+
+  /**
+    * DIMACS graph with optional metadata for ease of construction [[graphs.UndirectedGraph]]
+    *
+    * @param name name of the dimacs graph
+    * @param nodes number of nodes in graph
+    * @param totalEdges number of edges in graph
+    * @param edges definitions of edges in the graph
+   */
   case class DimacsGraph(name: String = "", nodes: Int = -1, totalEdges: Int = -1, edges: Set[Edge] = Set()) {
+    /** Returns true if graph has been successfully read */
     def isDefined = edges.nonEmpty
   }
 
+  /**
+   * Returns [[app.App.DimacsGraph]] read from some stream.
+   *
+   * To read from stdin use it like so:
+   * {{{
+   *  val lines: Iterator[String] = scala.io.Source.stdin.getLines()
+     val dimacsGraph: DimacsGraph = Try(readDimacsFormat(lines)).getOrElse(DimacsGraph())
+   * }}}
+   *
+   * Wrapping it with [[scala.util.Try]] allows for safe construction
+   *
+   * @param lines input graph
+   * @return DimacsGraph
+   */
   def readDimacsFormat(lines: Iterator[String]): DimacsGraph = {
     var dimacsGraph = DimacsGraph()
     val EdgeLine = """e (\d*) (\d*)""".r
@@ -36,6 +61,12 @@ object App extends scala.App {
     dimacsGraph
   }
 
+  /**
+   * Returns time in milliseconds and memory in kb required to execute passed in codeBlock
+   * @param codeBlock code block to execute
+   * @tparam R any result
+   * @return triple, result of the code block along with time and memory
+   */
   def measureTimeAndMemory[R](codeBlock: () => R): (R, Long, Long) = {
     val start = System.currentTimeMillis()
     val startMemory = Runtime.getRuntime().freeMemory
@@ -48,15 +79,36 @@ object App extends scala.App {
     (result, time, kb)
   }
 
+  /** BenchmarkResult is simple wrapper for benchmark results.
+   *
+   * @param n number of nodes
+   * @param avgDuration average duration of algorithm in milliseconds
+   * @param avgMemory average memory taken by algorithm in kb
+   */
   case class BenchmarkResult(n: Int, avgDuration: Double, avgMemory: Double)
-  def measureTimeAndMemoryComplexity(appOptions: AppOptions, applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
+
+  /**
+   * Performs benchmark and returns its results as list. Benchmark is performed on random undirected graph with given parameters.
+   *
+   * Benchmarking starts from graphs with 10 nodes up to given maximal number of nodes specified in appOptions.
+   * Number of nodes and probability of the edge parameters are used to construct random undirected graph.
+   *
+   * For each constructed graph algorithm is run 4 times (sampleSize) and results of benchmark are aggregated and averaged.
+   *
+   *
+   * @param maxNodes maximal number of nodes. Benchmark will be run on graphs starting at 10 nodes up to maxNodes
+   * @param probabilityOfEdge probability of the edge
+   * @param applyAlgorithm function which applies algorithm to given graph
+   * @return list of [[app.App.BenchmarkResult]]
+   */
+  def measureTimeAndMemoryComplexity(maxNodes: Int, probabilityOfEdge: Double, applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
     var results = scala.collection.mutable.MutableList[BenchmarkResult]()
-    for (n <- 10 to appOptions.benchmarkMaxNodes) {
+    for (n <- 10 to maxNodes) {
       val sampleSize = 4
       var durationSum: Long = 0
       var memorySum: Long = 0
       for (j <- 1 to sampleSize) {
-        val g = Graph.randomUndirectedGraph(n, appOptions.probabilityOfEdge)
+        val g = Graph.randomUndirectedGraph(n, probabilityOfEdge)
         val (result, duration, memory) = measureTimeAndMemory(() => applyAlgorithm(g))
         durationSum += duration
         memorySum += memory
@@ -65,12 +117,14 @@ object App extends scala.App {
       val avgDuration: Double = durationSum / sampleSize
       val avgMemory: Double = memorySum / sampleSize
 
-//      println(s"${n} ${avgDuration} ${avgMemory}")
       results += BenchmarkResult(n, avgDuration, avgMemory)
     }
     results.toList
   }
 
+  /**
+   * Program usage instructions, linux like style.
+   */
   val usage =
     """ Usage:
       | [-j] [-max seconds] [-v] [-csv] [-benchmark maxNodes probabilityOfEdge] [-progress]
@@ -83,21 +137,39 @@ object App extends scala.App {
       |
       | -v verbose mode
       |
-      | -csv Output results in csv like format
+      | -csv Output results in csv like format. Result are in format: GraphName, Algorithm, w(g), TIME, memory
       |
-      | -benchmark maxNodes probabilityOfEdge Perform benchmark of algorithms using randomly generated graphs
+      | -benchmark maxNodes probabilityOfEdge Perform benchmark of algorithm using randomly generated graphs with specified parameters:
+      | max nodes and probability of the edge. Benchmark is another mode to run program. You can't benchmark some dimacs graph.
       |
       | -progress output intermediate maximal cliques
       |
       |
       | Example
+      | "-max 90 -progress -csv < data/graph" Runs BasicMC algorithm for maximum of 90 seconds. Displays next best results (progress) using csv format
       | "-max 30 -j < data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
+      | "-benchmark 100 0.9" Does benchmark on random undirected graphs starting at 10 nodes up to 100 nodes with
+      |  probability of edge 0.9 using BasicMC algorithm
+      | "-benchmark 50 0.7 -j" Does benchmark on random undirected graphs starting at 10 nodes up to 50 nodes with
+      |  probability of edge 0.7 using Bron-Kerbosch algorithm
     """.stripMargin
 
+  /**
+   * Application options are grouped into this single case class
+   * @param bronKerbosch if true use Bron-Kerbosch algorithm. Default is false
+   * @param timeout maximum number of seconds. Defaults to infinity
+   * @param benchmark if true then run benchmark mode
+   * @param benchmarkMaxNodes max nodes for benchmark mode
+   * @param probabilityOfEdge probability of edge for benchmark mode
+   * @param verbose if true then program will be verbose
+   * @param outputInCSVFormat if true then results will be printed in csv like style: GraphName, Algorithm, w(g), TIME, memory
+   * @param showProgress if true then intermediate results will be printed on the standard output
+   */
   case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false, benchmarkMaxNodes: Int = 40,
                         probabilityOfEdge : Double = 0.8, verbose: Boolean = false, outputInCSVFormat: Boolean = false, showProgress: Boolean = false)
 
-  def nextOption(appOptions: AppOptions, remainingArgs: List[String]): AppOptions = {
+  /** Helper method to read program arguments and build instance of AppOptions */
+  private def nextOption(appOptions: AppOptions, remainingArgs: List[String]): AppOptions = {
     remainingArgs match {
       case "-j" :: tail => nextOption(appOptions.copy(bronKerbosch = true), tail)
       case "-max" :: timeoutInSeconds :: tail => nextOption(appOptions.copy(timeout = Duration(timeoutInSeconds.toInt, TimeUnit.SECONDS)), tail)
@@ -114,7 +186,7 @@ object App extends scala.App {
 
   if (appOptions.benchmark) {
     val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
-    val results = measureTimeAndMemoryComplexity(appOptions, algorithm)
+    val results = measureTimeAndMemoryComplexity(appOptions.benchmarkMaxNodes, appOptions.probabilityOfEdge, algorithm)
     val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
     println(printableResults.map(_.mkString(",")).mkString("\n"))
   }
