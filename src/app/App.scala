@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit
 import java.lang.Runtime
 import scala.util.Try
 import rx.lang.scala.Observable
+import scala.collection.mutable
 
 /**
  * @author Marek Lewandowski <marek.m.lewandowski@gmail.com>
@@ -47,7 +48,9 @@ object App extends scala.App {
     (result, time, kb)
   }
 
+  case class BenchmarkResult(n: Int, avgDuration: Double, avgMemory: Double)
   def measureTimeAndMemoryComplexity(applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
+    var results = scala.collection.mutable.MutableList[BenchmarkResult]()
     for (n <- 10 to 40) {
       val sampleSize = 4
       var durationSum: Long = 0
@@ -62,8 +65,10 @@ object App extends scala.App {
       val avgDuration: Double = durationSum / sampleSize
       val avgMemory: Double = memorySum / sampleSize
 
-      println(s"${n} ${avgDuration} ${avgMemory}")
+//      println(s"${n} ${avgDuration} ${avgMemory}")
+      results += BenchmarkResult(n, avgDuration, avgMemory)
     }
+    results.toList
   }
 
   def measureTimeAndMemoryComplexityOfBronKerbosch() = {
@@ -76,7 +81,7 @@ object App extends scala.App {
       |
       |
       |
-      | -j Use Bron-Kerbosch algorithm. Uses BasicMQ by default
+      | -j Use Bron-Kerbosch algorithm. Uses BasicMC by default
       |
       | -max seconds - run algorithm for maximum number of seconds. Best result so far will be returned upon timeout
       |
@@ -113,13 +118,15 @@ object App extends scala.App {
 
   if (appOptions.benchmark) {
     val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
-    measureTimeAndMemoryComplexity(algorithm)
+    val results = measureTimeAndMemoryComplexity(algorithm)
+    val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
+    println(printableResults.map(_.mkString(",")).mkString("\n"))
   }
   else if(System.in.available() > 0) {
     def getProgressPrinter(verbose: Boolean) = (s: String) => if (verbose) println(s)
     def getResultPrinter(csvOutput: Boolean, graphName: String, bronKerbosch: Boolean) =
       (cf: CliqueFound) => if(csvOutput) {
-        val l = graphName :: (if(bronKerbosch) "Bron-Kerbosch" else "BasicMQ") :: cf.size :: cf.elapsedTime :: cf.memoryInKb :: Nil
+        val l = graphName :: (if(bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: cf.size :: cf.elapsedTime :: cf.memoryInKb :: Nil
         println(l.mkString(","))
       }
       else
