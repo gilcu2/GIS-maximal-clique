@@ -81,14 +81,6 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 \end{algorithmic}
 \end{algorithm}
 
-\section{Program}
-\label{sec-3}
-Program zostanie zaimplementowany w języku Scala. Jest to statycznie typowany język działający na JVM, w pełni kompatybilny z językiem Java.
-
-Program będzie plikiem wykonywalnym wczytującym reprezentację grafu ze standardowego wejścia i wypisującym żądane informacje na standardowe wyjście.
-
-
-
 \section{Projekt testów}
 \label{sec-4}
 
@@ -230,6 +222,32 @@ Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby w
 java -Xmx2G -jar gis-maximal-clique.jar  -benchmark 50 0.7 -j
 \end{verbatim}
 Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 50 z prawdopodobieństwem wystąpienia krawędzi 0.7 korzystając z algorytmu Brona-Kerboscha.
+
+\section{Wprowadzenie do kodu dla programisty}
+Program został napisany w języku Scala. Do sprawdozdania dołączona została automatycznie wygenerowania dokumentacja ScalaDoc, która jest bardzo podobna do JavaDocu. Poniżej zebrane zostały najważniejsze informacje o programie służące do wprowadzenia programisty w temat programu.
+
+Program został podzielony na dwa moduły. Moduł IO i moduł grafów. 
+
+\subsection{Moduł IO}
+Moduł IO odpowiada za realizację funkcjonalności typowej dla aplikacji CLI, czyli interpretację argumentów, odczytanie wejścia, delegacji odpowiednich akcji do logiki grafów w zależności od podanych argumentów i wypisanie wyników na wyjście. Moduł IO został zdefiniowany w pakiecie \emph{app}.
+
+\subsection{Moduł grafów}
+Moduł grafów zawiera definicje generycznego funkcyjnego\footnote{a zatem niemutowalnego} grafu, implementacje niezorientowanego grafu, krawędzi, wierzchołków, algorytmów i funkcji pomocniczych. Najważniejszą funkcją jest funkcja \text{{graphs.Graph.findBiggestClique}}, która dokonuje obliczeń na grafie w wątkach działających w tle i w sposób asynchroniczny zwraca kolejne najlepsze wyniki. Użyta została tutaj abstrakcja znana z funkcyjnego reaktywnego programowania \emph{Observable}. Ze szczegółami tej abstrakcji czytelnik może zapoznać się u źródła \cite{rx}
+
+\subsubsection{Modyfikacje biblioteki JGraphT}
+W celu realizacji funkcjonalności wyników cząstkowych kod biblioteki musiał zostać zmodyfikowany. Konkretna klasa \emph{BronKerboschCliqueFinder} nie była otwarta na modyfikacje, dlatego też została przekopiowana do źródeł i zmodyfikowana. Dodana została także odpowiednia klasa w Scali opakowująca rozszerzoną klasę Javową z biblioteki tak, aby API było spójne i naturalne dla reszty programu.
+Modyfikacje biblioteki znajdują się w pakiecie \emph{extensions}.
+
+\subsection{Modyfikacje kodu}
+\begin{itemize}
+\item Nowe opcje, formaty wyjściowe i tym podobne powinny być dodawane do klasy \emph{app.App}.
+\item Nowe algorytmy powinny być dodawane do klasy \emph{graphs.Graph}
+\item Rozszerzenia do danych przechowywanych w wierzchołkach i krawędziach należy wprowadzać w odpowiednich klasach z pakietu \emph{graphs}
+\end{itemize}
+
+\subsection{API}
+Szczegóły dotyczące API zawarte są w dokumentacji ScalaDoc dołączonej do sprawozdania.
+
 
 \section{Przełożenie algorytmu na kod}
 TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jaki sposób)
