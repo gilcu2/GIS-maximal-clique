@@ -188,7 +188,7 @@ TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jak
 TODO algorytm
 
 \section{Porównanie algorytmów}
-Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMQ potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
+Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMC potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
 
 Zdecydowaliśmy się zatem ograniczyć czas działania algorytmów do 90 sekund na każdy problem i porównać wyniki pomijając fakt, że są one dużo gorsze od najlepszych rozwiązań.
 
@@ -208,7 +208,7 @@ Każdy test został przeprowadzony w następujących warunkach:
 Na początku przyjrzymy się wynikom otrzymanym dla każdego z grafów, a następnie na czas otrzymania tego wyniku. Wyniki przedstawione zostały na wykresach \ref{fig:dimacs-best-part1} i \ref{fig:dimacs-best-part2}. 
 
 \subsubsection{Najlepsze rozwiązania}
-Można zauważyć, że dla każdego grafu algorytm BasicMQ daje takie same lub lepsze wyniki przy danych ograniczeniach.
+Można zauważyć, że dla każdego grafu algorytm BasicMC daje takie same lub lepsze wyniki przy danych ograniczeniach.
 
 \begin{figure}[H]
   \begin{center}
@@ -236,7 +236,7 @@ Uruchomienie algorytmu dla grafu MANN\_a81.clq dla algorytmu Brona-Kerboscha spo
 TODO prawdopodobnie porównywanie czasów dla różnych najlepszych wyników to nie jest najlepsze rozwiązanie, bo gorszy algorytm czyli Bron-Kerbosch pokazuje lepsze czasy ale są to czasy dla gorszych wyników. Trzeba pobawić się trochę R i wybrać odpowiednie wyniki.
 
 Wyniki przedstawione zostały na wykresach \ref{fig:dimacs-best-time-part1} i \ref{fig:dimacs-best-time-part2}. Na wykresie, dla niektórych grafów widzimy bardzo niskie czasy. Nie oznacza to jedak, że algorytm znalazł optymalne rozwiązanie w krótkim czasie. Oznacza to, że algorytm znalazł jedno rozwiązanie dość szybko, a potem nie mógł znaleźć żadnego lepszego rozwiązania w ciągu kolejnych 90 sekund. Dotyczy to grafów 
-p\_hat300\_1.clq, p\_hat1500-1.clq, gen200\_p0.9\_44, brock200\_2.b, DSJC500. W niektórych przypadkach dotyczy to tylko algorytmu Brona-Kerboscha np. dla grafu C500.9.clq algorytm BasicMQ znalazł lepsze rozwiązanie przed końcem czasu.
+p\_hat300\_1.clq, p\_hat1500-1.clq, gen200\_p0.9\_44, brock200\_2.b, DSJC500. W niektórych przypadkach dotyczy to tylko algorytmu Brona-Kerboscha np. dla grafu C500.9.clq algorytm BasicMC znalazł lepsze rozwiązanie przed końcem czasu.
 
 
 
@@ -262,7 +262,7 @@ p\_hat300\_1.clq, p\_hat1500-1.clq, gen200\_p0.9\_44, brock200\_2.b, DSJC500. W 
 
 
 \subsection{Szybkość znajdowania kolejnych rozwiązań}
-Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozostałe warunki testowe są takie same. Program uruchomiony został z opcją wyświetlania coraz lepszych wyników. Wykres \ref{fig:ProgressC125.9-20min} przedstawia wyniki tego testu. Można zauważyć kilka ciekawych rzeczy. Po pierwsze algorytm BasicMQ zdążył znaleźć lepszy wynik. Najlepszy wynik znaleziony przez algorytm Brona-Kerboscha został znaleziony przez algorytm BasicMQ w czasie o rząd wielkości mniejszym. Widać tutaj także regularność - BasicMQ znajduje rozwiązania szybciej od algorytmu Brona-Kerboscha dla tego typu grafu.
+Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozostałe warunki testowe są takie same. Program uruchomiony został z opcją wyświetlania coraz lepszych wyników. Wykres \ref{fig:ProgressC125.9-20min} przedstawia wyniki tego testu. Można zauważyć kilka ciekawych rzeczy. Po pierwsze algorytm BasicMC zdążył znaleźć lepszy wynik. Najlepszy wynik znaleziony przez algorytm Brona-Kerboscha został znaleziony przez algorytm BasicMC w czasie o rząd wielkości mniejszym. Widać tutaj także regularność - BasicMC znajduje rozwiązania szybciej od algorytmu Brona-Kerboscha dla tego typu grafu.
 
 \begin{figure}[H]
   \begin{center}
