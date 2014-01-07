@@ -141,6 +141,7 @@ object App extends scala.App {
       |
       | -benchmark maxNodes probabilityOfEdge Perform benchmark of algorithm using randomly generated graphs with specified parameters:
       | max nodes and probability of the edge. Benchmark is another mode to run program. You can't benchmark some dimacs graph.
+      | maxNodes should be greater than 10
       |
       | -progress output intermediate maximal cliques
       |
@@ -185,10 +186,17 @@ object App extends scala.App {
 
 
   if (appOptions.benchmark) {
-    val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
-    val results = measureTimeAndMemoryComplexity(appOptions.benchmarkMaxNodes, appOptions.probabilityOfEdge, algorithm)
-    val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
-    println(printableResults.map(_.mkString(",")).mkString("\n"))
+    if(appOptions.benchmarkMaxNodes < 10) {
+      println("ILLEGAL ARGUMENT VALUE -benchmark maxNodes. MaxNodes should be greater than 10")
+      println()
+      println(usage)
+    }
+    else {
+      val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
+      val results = measureTimeAndMemoryComplexity(appOptions.benchmarkMaxNodes, appOptions.probabilityOfEdge, algorithm)
+      val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
+      println(printableResults.map(_.mkString(",")).mkString("\n"))
+    }
   }
   else if(System.in.available() > 0) {
     def getProgressPrinter(verbose: Boolean) = (s: String) => if (verbose) println(s)
