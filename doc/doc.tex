@@ -106,6 +106,7 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 Projekt testów został podzielony na 3 części, każda odpowiedzialna za inny aspekt programu.
 
 \subsection{Testy funkcjonane}
+TODO ta sekcja powinna zostać usunięta z dokumentacji końcowej
 Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji pozbawiona jest błędów. W ramach tych testów przetestowane zostaną przypadki:
 
 \begin{itemize}
@@ -119,6 +120,7 @@ Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji po
 Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych - zostaną wykonane odpowiednie testy.
 
 \subsection{Testy złożoności}
+TODO Ta sekcja powinna zostać połączona z wynikami badaniami złożoności jako jakiś teoretyczny wstęp
 \subsubsection{Złożoność pamięciowa}
 Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów pamięci zużytej przez program dla grafów o różnej wielkości. Oczekiwana złożoność pamięciowa programu to $O(|V|)$ (\ref{memory_complexity}). 
 
@@ -128,7 +130,9 @@ Testy mają na celu empiryczne zmierzenie złożoności obliczeniowej. W tym cel
 
 
 \subsection{Testy porównawcze}
-W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
+TODO ta podsekcja powinna zostać usunięta z ostatecznej dokumentacji końcowej
+W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów 
+dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
 Przed faktycznym mierzeniem czasu algorytmu dla danego grafu, algorytm zostanie uruchomiony wielokrotnie dla prostego problemu grafowego w celu ,,nagrzania'' JVM. Sam proces rozgrzewania JVM jest potrzebny do tego, aby program dawał wiarygodne wyniki, które nie są zaburzone optymalizacjami kompilatora JIT, takimi jak generowanie natywnego kodu dla często wykonywanych fragmentów kodu.
 
@@ -402,6 +406,7 @@ Testy sprawdzają czy zachowane są następujące własności grafu:
   \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków większej niż 4 ma maksymalną klikę o wielkości 3
   \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków równej 4 ma max. klikę o wielkości 4
   \item drzewo ma maksymalną klikę o wielkości 2
+  \item graf niespójny mający dwa podgrafy $K_{n_{1}}$ $K_{n_{2}}$ posiada maksymalną klikę wynoszącą $max(n_{1}, n_{2})$
 \end{itemize}
 
 Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
@@ -414,6 +419,10 @@ Testy które sprawdzają, że losowo wygenerowany graf jest poprawny:
 \end{itemize}
 
 Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest zatem program sbt http://www.scala-sbt.org/} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
+
+\section{Wnioski}
+
+TODO tutaj będą zebrane wszystkie wnioski na temat obu algorytmów. Część informacji będzie powtórzona z poprzednich sekcji. Tutaj po prostu bedą zebrane w jednym miejscu.
 
 \begin{figure}[H]
   \begin{center}
