@@ -12,6 +12,24 @@
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{listings}
+
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
 \author{Marek Lewandowski, Juliusz Gonera}
 \date{}
 \title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
@@ -214,9 +232,9 @@ java -Xmx2G -jar gis-maximal-clique.jar -max 30 -j < data/graph
 Uruchamia program z ograniczeniem czasowym 30 sekund korzystając z algorytmu Brona-Kerboscha dla grafu w formacie dimacs dostępnego pod ścieżką data/graph
 
 \begin{verbatim}
-java -Xmx2G -jar gis-maximal-clique.jar -benchmark 100 0.9
+java -Xmx2G -jar gis-maximal-clique.jar -benchmark 60 0.9
 \end{verbatim}
-Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 100 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
+Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 60 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
 
 \begin{verbatim}
 java -Xmx2G -jar gis-maximal-clique.jar  -benchmark 50 0.7 -j
@@ -249,9 +267,38 @@ Modyfikacje biblioteki znajdują się w pakiecie \emph{extensions}.
 Szczegóły dotyczące API zawarte są w dokumentacji ScalaDoc dołączonej do sprawozdania.
 
 
-\section{Przełożenie algorytmu na kod}
-TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jaki sposób)
-TODO algorytm
+\subsection{Implementacja algorytmu BasicMC}
+Dzięki bogatej składni języka Scala implementacja wygląda bardzo podobnie do pseudokodu algorytmu.
+
+\begin{lstlisting}[language=scala]  % Start your code-block
+
+def maximalClique(g: UndirectedGraph): Set[Node] = {
+    type V = Node
+    var Q = Set[V]()
+    var Qmax = Set[V]()
+
+    def expand(r: Set[V]): Set[V] = {
+      var R = r
+      while (R.nonEmpty) {
+        val p = R.head
+        if (Q.size + R.size > Qmax.size) {
+          Q = Q + p
+          val Rp = R intersect g.adj(p)
+          if (Rp.nonEmpty) expand(Rp)
+          else if (Q.size > Qmax.size) {
+            Qmax = Q
+          }
+          Q = Q - p
+        }
+        else Qmax
+        R = R - p
+      }
+      Qmax
+    }
+
+    expand(g.V)
+  }
+\end{lstlisting}
 
 \section{Porównanie algorytmów}
 Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMC potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
