@@ -64,7 +64,7 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(Graph.bronKerbosch(g).size == 30)
   }
 
-  "A cycle graph" should "have maximal clique of size 1" in {
+  "A cycle graph" should "have maximal clique of size 2" in {
     for (i <- 4 to 10) {
       assert(Graph.maximalClique(cycle(i)).size === 2)
       assert(Graph.bronKerbosch(cycle(i)).size === 2)
