@@ -359,6 +359,13 @@ Testy sprawdzają czy zachowane są następujące własności grafu:
 
 Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
 
+Testy które sprawdzają, że losowo wygenerowany graf jest poprawny:
+\begin{itemize}
+  \item test spójności grafu - każdy wierzchołek ma conajmniej jednego sąsiada
+  \item test na oczekiwaną liczbę krawędzi grafu z zadanym prawdopodobieństwem $p$ - liczba krawędzi przy prawdopodobieństwie p zawiera się w oczekiwanej liczbie krawędzi dla losowego grafu od $(p - \epsilon, p + \epsilon)$
+  \item graf ma zadaną liczbę wierzchołków $n$
+\end{itemize}
+
 Aby uruchomić testy należy wykonać \textit{sbt test} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
 
 \begin{figure}[H]
