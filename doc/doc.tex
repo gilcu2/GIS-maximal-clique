@@ -344,10 +344,32 @@ Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozos
 
 TODO
 
-\section{Testy kodu TODO lepsza nazwa}
+\section{Testy Poprawności Implementacji}
 
-TODO pokazać, że to co napisaliśmy, że będziemy testować zostało przetestowane i działa. Screen z uruchomienia sbt test?
+W katalogu \textit{test/graphs/} zostały umieszczone testy podstawowych przypadków brzegowych dla zaimplementowanego algorytmu znajdowania największej kliki BasicMC.
+Testy sprawdzają czy zachowane są następujące własności grafu:
+\begin{itemize}
+  \item maksymalna klika grafu pustego powinna mieć wielkość 1
+  \item graf pełny ma maksymalną klikę wielkości równej liczbie wierzchołków
+  \item cykl ma maksymalną klikę o wielkości 1
+  \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków większej niż 4 ma maksymalną klikę o wielkości 3
+  \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków równej 4 ma max. klikę o wielkości 4
+  \item drzewo ma maksymalną klikę o wielkości 2
+\end{itemize}
 
+Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
+
+Aby uruchomić testy należy wykonać \textit{sbt test} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/tests.png}
+  }
+  \end{center}
+  \caption{Asercje spełniane przez BasicMC}
+  \label{fig:tests}
+\end{figure}
 
 \nocite{*}
 \bibliographystyle{plainnat}
