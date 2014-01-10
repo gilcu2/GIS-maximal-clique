@@ -200,20 +200,31 @@ Ograniczenie to dotyczy czasu działania \emph{algorytmu}, a nie \emph{programu}
 \subsection{Wyniki cząstkowe}
 Domyślnie program wyświetla tylko najlepsze znalezione rozwiązanie. Korzystając z opcji $-progress$ program będzie wyświetlał na bieżąco kolejne najlepsze rozwiązania.
 
+\subsection{Tylko rozmiar kliki}
+Domyślnie program wyświetla etykiety wierzchołków tworzących klikę. Korzystając z opcji $-sizeOnly$ program będzie wyświetlał tylko rozmiar kliki bez wypisywania wierzchołków. Więcej informacji przy opisie formatowania.
+
 \subsection{Formatowanie}
 Domyślnie program wyświetla wyniki w poniższym formacie:
 
 \begin{verbatim}
 w(g) TIME
+V1 V2 V3 ...
 \end{verbatim}
-Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu w milisekundach.
+Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki, $\text{TIME}$ - czas wykonania algorytmu w milisekundach, $\text{V1 V2 V3}$ to etykiety wierzchołków, które tworzą klikę maksymalną. Przykładowy wynik to:
+
+\begin{verbatim}
+24 613
+101 120 52 110 125 20 93 29 121 85 105 17 118 12 81 39 98 66 3 67 11 23 119 47
+\end{verbatim}
+
+Korzystając z opcji $-sizeOnly$ format wyjściowy nie będzie zawierał drugiej linijki. 
 
 Korzystając z opcji $-csv$ program będzie wyświetlał wynik w formacie CSV z większa ilością informacji. Kolejne kolumny to:
 \begin{verbatim}
-Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY
+Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY, CLIQUE
 \end{verbatim}
 
-gdzie $\text{MEMORY}$ to zużyta pamięć w kB.
+gdzie $\text{MEMORY}$ to zużyta pamięć w kB, a $\text{CLIQUE}$ to numery wierzchołków podobnie jak w prostej wersji formatu. Korzystając z opcji $-sizeOnly$ wyjście nie będzie zawierało kolumny $\text{CLIQUE}$.
 
 \subsection{Tryb benchmark}
 Program można włączyć w trybie benchmark. Będzie wtedy testował dany algorytm na losowo wygenerowanym spójnym grafie nieskierowanym z zadanymi parameterami. Aby włączyć program w tym trybie należy podać argument z dwiema wartościami \emph{\text{-benchmark N p}} gdzie $N$ to maksymalna liczba wierzchołków w losowo wygenerowanym grafie, a $p$ to prawdopodobieństwo wystąpienia krawędzi. $N$ powinno być większe od 10.

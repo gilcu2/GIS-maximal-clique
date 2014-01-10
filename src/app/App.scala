@@ -145,6 +145,7 @@ object App extends scala.App {
       |
       | -progress output intermediate maximal cliques
       |
+      | -sizeOnly do not display labels of nodes forming maximal clique
       |
       | Example
       | "-max 90 -progress -csv < data/graph" Runs BasicMC algorithm for maximum of 90 seconds. Displays next best results (progress) using csv format
