@@ -167,7 +167,8 @@ object App extends scala.App {
    * @param showProgress if true then intermediate results will be printed on the standard output
    */
   case class AppOptions(bronKerbosch: Boolean = false, timeout: Duration = Duration.Inf, benchmark: Boolean = false, benchmarkMaxNodes: Int = 40,
-                        probabilityOfEdge : Double = 0.8, verbose: Boolean = false, outputInCSVFormat: Boolean = false, showProgress: Boolean = false)
+                        probabilityOfEdge : Double = 0.8, verbose: Boolean = false, outputInCSVFormat: Boolean = false,
+                        showProgress: Boolean = false, sizeOnly: Boolean = false)
 
   /** Helper method to read program arguments and build instance of AppOptions */
   private def nextOption(appOptions: AppOptions, remainingArgs: List[String]): AppOptions = {
@@ -178,6 +179,7 @@ object App extends scala.App {
       case "-csv" :: tail => nextOption(appOptions.copy(outputInCSVFormat = true), tail)
       case "-benchmark" :: maxN :: probabilityOfEdge :: tail => nextOption(appOptions.copy(benchmark = true, benchmarkMaxNodes = maxN.toInt,probabilityOfEdge =  probabilityOfEdge.toDouble), tail)
       case "-progress" :: tail => nextOption(appOptions.copy(showProgress = true), tail)
+      case "-sizeOnly" :: tail => nextOption(appOptions.copy(sizeOnly = true), tail)
       case rest => appOptions
     }
   }
@@ -200,13 +202,18 @@ object App extends scala.App {
   }
   else if(System.in.available() > 0) {
     def getProgressPrinter(verbose: Boolean) = (s: String) => if (verbose) println(s)
-    def getResultPrinter(csvOutput: Boolean, graphName: String, bronKerbosch: Boolean) =
+    def getResultPrinter(csvOutput: Boolean, graphName: String, bronKerbosch: Boolean, sizeOnly: Boolean) =
       (cf: CliqueFound) => if(csvOutput) {
-        val l = graphName :: (if(bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: cf.size :: cf.elapsedTime :: cf.memoryInKb :: Nil
+        val listEnd = if(sizeOnly) Nil else cf.nodes.map(_.i).mkString(" ") :: Nil
+        val l = graphName :: (if(bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: cf.nodes.size :: cf.elapsedTime ::
+          cf.memoryInKb :: listEnd
         println(l.mkString(","))
       }
       else
-        println(s"${cf.size} ${cf.elapsedTime}")
+      {
+        println(s"${cf.nodes.size} ${cf.elapsedTime}")
+        if(!sizeOnly) println(cf.nodes.map(_.i).mkString(" "))
+      }
 
     val printer: (String) => Unit = getProgressPrinter(appOptions.verbose)
 
@@ -218,7 +225,7 @@ object App extends scala.App {
     val dimacsGraph: DimacsGraph = Try(readDimacsFormat(lines)).getOrElse(DimacsGraph())
 
     if (dimacsGraph.isDefined) {
-      val resultPrinter = getResultPrinter(appOptions.outputInCSVFormat, dimacsGraph.name, appOptions.bronKerbosch)
+      val resultPrinter = getResultPrinter(appOptions.outputInCSVFormat, dimacsGraph.name, appOptions.bronKerbosch, appOptions.sizeOnly)
       printer("Dimacs graph has been read. Proceeding to build graph")
       val g: UndirectedGraph = Graph.undirected(dimacsGraph.edges)
       printer("Graph has been built. Triggering building of adjacency list")
@@ -232,7 +239,7 @@ object App extends scala.App {
         })
       val list: List[CliqueFound] = observable.toBlockingObservable.toList
       if(!appOptions.showProgress) {
-        val maximal = list.headOption.getOrElse(CliqueFound(1,appOptions.timeout.toMillis,0))
+        val maximal = list.headOption.getOrElse(CliqueFound(Set(),appOptions.timeout.toMillis,0))
         resultPrinter(maximal)
       }
     }
