@@ -39,7 +39,16 @@
 
 \section{Problem maksymalnej kliki}
 \label{sec-1}
-Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. Maksymalna klika to klika składająca się z największej liczby wierzchołków. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
+Definicje klik:
+\begin{description}
+\item[Klika] - kliką w grafie $G$ jest kompletny podgraf grafu $G$.
+\item[Klika maksymalna] - klika, która nie może być rozszerzona poprzez dołączenie kolejnego sąsiadującego wierzchołka - oznacza to, że klika maksymalna nie jest podzbiorem innej większej kliki. 
+\item[Największa klika] - klika o największej ilości wierzchołków. Największa klika jest kliką maksymalną, ale odwrotne stwierdzenie nie jest prawdziwe.
+\end{description}
+
+Definicje klik zostały zaczerpnięte z \cite{weissteinClique}. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym i jest jednym z 21 NP zupełnych problemów Karpa \cite{Kar72}.
+
+Powyższa terminologia w praktyce jest stosowana trochę skrótowo. Mianowicie szukanie maksymalnej kliki odnosi się do poszukiwań kliki największej, która z definicji jest także maksymalna. Natomiast szukanie wszystkich maksymalnych klik odnosi się do problemu, w których szukanych jest wiele klik o różnych rozmiarach, z których wszystkie są maksymalne, ale nie wszystkie są największe. Przykładowo w grafie o trzech składowych K3, K3 i K4 istnieją 3 kliki maksymalne, ale tylko jedna z nich jest największa - ta o rozmiarze 4.
 
 \section{Algorytm BasicMC}
 \label{sec-2}
