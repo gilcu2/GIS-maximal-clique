@@ -420,7 +420,7 @@ Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowe
 \subsection{Złożoność pamięciowa}
 \label{memory_complexity}
 
-Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamiec rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC.
+Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamiec rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC\footnote{skrót od ang. Garbage Collector}.
 
 \begin{figure}[H]
   \begin{center}
@@ -433,7 +433,9 @@ Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego d
 \end{figure}
 
 \section{Testy Poprawności Implementacji}
+Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
 
+\subsection{Przypadki trywialne}
 W katalogu \textit{test/graphs/} zostały umieszczone testy podstawowych przypadków brzegowych dla zaimplementowanego algorytmu znajdowania największej kliki BasicMC.
 Testy sprawdzają czy zachowane są następujące własności grafu:
 \begin{itemize}
@@ -446,8 +448,10 @@ Testy sprawdzają czy zachowane są następujące własności grafu:
   \item graf niespójny mający dwa podgrafy $K_{n_{1}}$ $K_{n_{2}}$ posiada maksymalną klikę wynoszącą $max(n_{1}, n_{2})$
 \end{itemize}
 
-Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
+\subsection{Przypadek nietrywialny}
+Oprócz podstawowych przypadków algorytm został także przetestowany na losowo wygenerowanym grafie z częściowo znaną strukturą. Do losowo wygenerowanego grafu dołączone zostały podgrafy K20, K5, K7. Dla tak powstałego spójnego grafu algorytm prawidłowo znalazł klikę maksymalną o wielkości 20.
 
+\subsection{Testy generatora losowych grafów}
 Testy które sprawdzają, że losowo wygenerowany graf jest poprawny:
 \begin{itemize}
   \item test spójności grafu - każdy wierzchołek ma conajmniej jednego sąsiada
@@ -455,6 +459,7 @@ Testy które sprawdzają, że losowo wygenerowany graf jest poprawny:
   \item graf ma zadaną liczbę wierzchołków $n$
 \end{itemize}
 
+\subsection{Uruchamianie testów}
 Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest zatem program sbt http://www.scala-sbt.org/} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
 
 \begin{figure}[H]
