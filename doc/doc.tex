@@ -39,11 +39,22 @@
 
 \section{Problem maksymalnej kliki}
 \label{sec-1}
-Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. Maksymalna klika to klika składająca się z największej liczby wierzchołków. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
+Definicje klik:
+\begin{description}
+\item[Klika] - kliką w grafie $G$ jest kompletny podgraf grafu $G$.
+\item[Klika maksymalna] - klika, która nie może być rozszerzona poprzez dołączenie kolejnego sąsiadującego wierzchołka - oznacza to, że klika maksymalna nie jest podzbiorem innej większej kliki. 
+\item[Największa klika] - klika o największej ilości wierzchołków. Największa klika jest kliką maksymalną, ale odwrotne stwierdzenie nie jest prawdziwe.
+\end{description}
+
+Definicje klik zostały zaczerpnięte z \cite{weissteinClique}. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym i jest jednym z 21 NP zupełnych problemów Karpa \cite{Kar72}.
+
+Powyższa terminologia w praktyce jest stosowana trochę skrótowo. Mianowicie szukanie maksymalnej kliki odnosi się do poszukiwań kliki największej, która z definicji jest także maksymalna. Natomiast szukanie wszystkich maksymalnych klik odnosi się do problemu, w których szukanych jest wiele klik o różnych rozmiarach, z których wszystkie są maksymalne, ale nie wszystkie są największe. Przykładowo w grafie o trzech składowych K3, K3 i K4 istnieją 3 kliki maksymalne, ale tylko jedna z nich jest największa - ta o rozmiarze 4. 
+
+W poniższej pracy mówiąc o maksymalnej klice odnosimy się do największej maksymalnej kliki. 
 
 \section{Algorytm BasicMC}
 \label{sec-2}
-Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
+Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm ten został wybrany z powodu jego elegancji i prostoty. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
 
 \subsection{Struktury danych}
 
@@ -79,6 +90,9 @@ Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usu
 Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności klasycznego algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w sprawozdaniu\ref{fig:time-complexity}. Istnieją odmiany tego algorytmu działające w czasie $O(3^{n/3})$\citep{tomita}.
 
 W ogólności problem znajdowania kliki jest NP trudny\citep{karp}. Algorytm o najniższym ograniczeniu teoretycznym cechuje się złożonością czasową należącą do klasy $O(1.8888^{n})$\citep{robson}
+
+\section{Różnice między algorytmami}
+Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha jest to, że BasicMC szuka jedyne największej kliki. Algorytm Brona-Kerboscha znajduje wszystkie maksymalne kliki, z których później wybierana jest największa.
 
 \begin{algorithm}
 \caption{BasicMC}\label{basicmc}
