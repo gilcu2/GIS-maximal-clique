@@ -16,9 +16,9 @@ trait GraphsFixtures {
     g
   }
 
-  def completeGraph(n: Int): UndirectedGraph = {
+  def completeGraph(n: Int, offset: Int): UndirectedGraph = {
     val nodes: Set[Node] = {
-      for (i <- 1 to n) yield Node(i)
+      for (i <- 1 to n) yield Node(i + offset)
     }.toSet
 
     val edges: Set[Edge] = {
@@ -26,15 +26,19 @@ trait GraphsFixtures {
         i <- 1 to n
         j <- 1 to n
         if i != j
-      } yield Edge(Node(i), Node(j))
+      } yield Edge(Node(i + offset), Node(j + offset))
     }.toSet
     new UndirectedGraph(nodes, edges)
+  }
+
+  def completeGraph(n: Int): UndirectedGraph = {
+    completeGraph(n, 0)
   }
 
   def disconnectedGraphWithTwoCompleteGraphs(n1: Int, n2: Int) = {
 
     val g1: UndirectedGraph = completeGraph(n1)
-    val g2: UndirectedGraph = completeGraph(n2)
+    val g2: UndirectedGraph = completeGraph(n2, n1)
 
     new UndirectedGraph(g1.V ++ g2.V, g1.E ++ g2.E)
   }
