@@ -41,7 +41,7 @@
 \label{sec-1}
 Kliką nazywamy spójny podgraf, taki że nie jest on zawarty w żadnym innym spójnym podgrafie. Maksymalna klika to klika składająca się z największej liczby wierzchołków. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym.
 
-\section{Algorytm}
+\section{Algorytm BasicMC}
 \label{sec-2}
 Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
 
@@ -65,6 +65,12 @@ Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowane
 \label{memory_complexity}
 
 Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamięci potrzebnej jest wprost proporcjonalna do liczby wierzchołków grafu. Wynika to bezpośrednio z definicji i sposobu użycia zbiorów $Q$, $Q_{max}$ i $R$.
+
+\section{Algorytm Brona-Kerboscha}
+
+Zaimplementowany algorytm BasicMC opisany powyżej został porównany z klasycznym algorytmem Brona-Kerboscha, a konkretnie z jego implementacją udostępnianą przez bibliotekę JGraphT.
+
+Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nie incydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wyberanego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
 
 \begin{algorithm}
 \caption{BasicMC}\label{basicmc}
@@ -98,6 +104,25 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 
 \end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}
+\caption{Bron-Kerbosch}\label{bron-kerbosch}
+\begin{algorithmic}[1]
+  
+\Procedure{BronKerbosch}{$R,P,X$}
+  \If{$P$ and $Q$ are both empty}
+    \State report $R$ as maximal clique
+  \EndIf
+  \ForAll{$v \in P$}
+    \State BronKerbosch($R \cup v, P \cap adj(v), X \cap adj(v)$)
+    \State $P \gets P - v$
+    \State $X \gets X \cup v$
+  \EndFor
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
 
 \section{Projekt testów}
 \label{sec-4}
