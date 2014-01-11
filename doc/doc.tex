@@ -54,6 +54,8 @@ W poniższej pracy mówiąc o maksymalnej klice odnosimy się do największej ma
 
 \section{Algorytm BasicMC}
 \label{sec-2}
+Większość informacji zawartych w niniejszym rozdziale jest taka sama w stosunku do wstępnego sprawozdania. Zaznajomiony czytelnik może śmiało przejść do opisu algorytmu Brona-Kerboscha w rozdziale \ref{bron-kerbosch-alg}.
+
 Do zaimplementowania został wybrany algorytm \ref{basicmc} przechodzący graf w głąb i używający techniki branch-and-bound w celu znalezienia maksymalnej kliki. Algorytm ten został wybrany z powodu jego elegancji i prostoty. Algorytm został opisany w \citep{bioinf} (Fig. 2). Zostanie on porównany z dostępną implementacją algorytmu Brona-Kerboscha w bibliotece JGraphT\citep{jgrapht}.
 
 \subsection{Struktury danych}
@@ -62,7 +64,7 @@ W algorytmie \ref{basicmc} wykorzystywane są zbiory $Q$ i $Q_{max}$. $Q$ przech
 
 \subsection{Opis Algorytmu}
 
-Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia.\algref{basicmc}{skip}
+Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia, ponieważ wiadomo, że nie znajdzie tam większej kliki.\algref{basicmc}{skip}
 
 \subsection{Warunek Stopu}
 
@@ -78,12 +80,16 @@ Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowane
 Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamięci potrzebnej jest wprost proporcjonalna do liczby wierzchołków grafu. Wynika to bezpośrednio z definicji i sposobu użycia zbiorów $Q$, $Q_{max}$ i $R$.
 
 \section{Algorytm Brona-Kerboscha}
-
+\label{bron-kerbosch-alg}
 Zaimplementowany algorytm BasicMC opisany powyżej został porównany z klasycznym algorytmem Brona-Kerboscha, a konkretnie z jego implementacją udostępnianą przez bibliotekę JGraphT.
 
+<<<<<<< HEAD
 \subsection{Opis Algorytmu}
 
 Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nie incydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wyberanego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
+=======
+Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nieincydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wybranego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
+>>>>>>> Be explicit about repeated paragraphs from previous docs. Improvements here and there.
 
 \subsection{Złożoność}
 
@@ -92,9 +98,11 @@ Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności 
 W ogólności problem znajdowania kliki jest NP trudny\citep{karp}. Algorytm o najniższym ograniczeniu teoretycznym cechuje się złożonością czasową należącą do klasy $O(1.8888^{n})$\citep{robson}
 
 \section{Różnice między algorytmami}
-Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha jest to, że BasicMC szuka jedyne największej kliki. Algorytm Brona-Kerboscha znajduje wszystkie maksymalne kliki, z których później wybierana jest największa.
+Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha jest to, że BasicMC szuka jedynie największej kliki. Algorytm Brona-Kerboscha znajduje wszystkie maksymalne kliki, z których później wybierana jest największa.
 
-\begin{algorithm}
+TODO czy coś więcej można tutaj napisać?
+
+\begin{algorithm}[H]
 \caption{BasicMC}\label{basicmc}
 \begin{algorithmic}[1]
   
@@ -127,7 +135,7 @@ Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha j
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{Bron-Kerbosch}\label{bron-kerbosch}
 \begin{algorithmic}[1]
   
@@ -148,12 +156,12 @@ Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha j
 
 \section{Projekt testów}
 \label{sec-4}
+Projekt testów został opisany w dokumentacji wstępnej i nie uległ gruntownym zmianom. Jedynymi zmianami było wykonanie większej ilości testów funkcjonalnych oraz odrzucenie rozgrzewania JVM ze względu na czynniki opisane w rozdziale porównującym algorytmy \ref{algorithm-comparison}. Poniżej znajdują się te same informacje, które zaznajomiony czytelnik może pominąć przechodząc do rozdziału \ref{artifacts}.
 
-\subsection{Projekt Testów}
+\subsection{Podział testów}
 Projekt testów został podzielony na 3 części, każda odpowiedzialna za inny aspekt programu.
 
 \subsection{Testy funkcjonane}
-TODO ta sekcja powinna zostać usunięta z dokumentacji końcowej
 Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji pozbawiona jest błędów. W ramach tych testów przetestowane zostaną przypadki:
 
 \begin{itemize}
@@ -167,38 +175,25 @@ Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji po
 Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych - zostaną wykonane odpowiednie testy.
 
 \subsection{Testy złożoności}
-TODO Ta sekcja powinna zostać połączona z wynikami badaniami złożoności jako jakiś teoretyczny wstęp
 \subsubsection{Złożoność pamięciowa}
 Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów pamięci zużytej przez program dla grafów o różnej wielkości. Oczekiwana złożoność pamięciowa programu to $O(|V|)$ (\ref{memory_complexity}). 
 
 \subsubsection{Złożoność obliczeniowa}
 Testy mają na celu empiryczne zmierzenie złożoności obliczeniowej. W tym celu zostaną wygenerowane grafy losowe z różnym prawdopodobieństwem krawędzi i różną liczbą wierzchołków. Dla każdego z wygenerowanych grafów uruchomiony zostanie algorytm. Zebrane wyniki poddane zostaną analizie statystycznej, która pozwoli określić złożoność obliczeniową.
 
-
-
 \subsection{Testy porównawcze}
-TODO ta podsekcja powinna zostać usunięta z ostatecznej dokumentacji końcowej
 W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów 
 dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
-Przed faktycznym mierzeniem czasu algorytmu dla danego grafu, algorytm zostanie uruchomiony wielokrotnie dla prostego problemu grafowego w celu ,,nagrzania'' JVM. Sam proces rozgrzewania JVM jest potrzebny do tego, aby program dawał wiarygodne wyniki, które nie są zaburzone optymalizacjami kompilatora JIT, takimi jak generowanie natywnego kodu dla często wykonywanych fragmentów kodu.
-
-\section{TODO dokumetacja końcowa}
-To co musimy zrobić to:
-\begin{itemize}
-\item przeredagować to co było wcześniej, tak żeby nie powtarzać tej treści 1 do 1, ale żeby najbardziej kluczowe elementy były zawarte
-\item reszta TODO poniżej
-\end{itemize}
-
 \section{Artefakty projetkowe}
+\label{artifacts}
 Razem ze sprawozdaniem dostarczone zostały następujące aretefakty projektowe:
 \begin{itemize}
 \item Gotowy wykonywalny program gis-maximal-clique.jar
 \item Kod źródłowy programu
-\item Wyniki z uruchomienia programu na grafach ze zbioru DIMACS TODO nazwa plików
-\item Wyniki z testowania złożoności pamięciowej i czasowej TODO nazwa pliku
+\item Plik $\text{dimacs-best-90sec}$ z wynikami z uruchomienia programu na grafach ze zbioru DIMACS 
+\item Plik $\text{benchmark-50-0.7.txt}$ z wynikami z testowania złożoności pamięciowej i czasowej
 \item Automatycznie wygenerowana dokumentacja dla programisty
-\item TODO coś jeszcze?
 \end{itemize}
 
 \section{Instrukcja obsługi programu}
@@ -328,7 +323,7 @@ Modyfikacje biblioteki znajdują się w pakiecie \emph{extensions}.
 \subsection{API}
 Szczegóły dotyczące API zawarte są w dokumentacji ScalaDoc dołączonej do sprawozdania.
 
-
+\newpage
 \subsection{Implementacja algorytmu BasicMC}
 Dzięki bogatej składni języka Scala implementacja wygląda bardzo podobnie do pseudokodu algorytmu.
 
@@ -363,6 +358,7 @@ def maximalClique(g: UndirectedGraph): Set[Node] = {
 \end{lstlisting}
 
 \section{Porównanie algorytmów}
+\label{algorithm-comparison}
 Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMC potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
 
 Zdecydowaliśmy się zatem ograniczyć czas działania algorytmów do 90 sekund na każdy problem i porównać wyniki pomijając fakt, że są one dużo gorsze od najlepszych rozwiązań.
@@ -410,11 +406,8 @@ Można zauważyć, że dla każdego grafu algorytm BasicMC daje takie same lub l
 Uruchomienie algorytmu dla grafu MANN\_a81.clq dla algorytmu Brona-Kerboscha spowodowało błąd braku pamięci. Graf ten ma 3321 wierzchołków i 5 506 380 krawędzi. Test został uruchomiony ponownie z 4G pamięci. Przy ponownym uruchomieniu algorytm wykonał się poprawnie, ale nie zwrócił żadnych wyników - żadna klika nie została znaleziona w czasie 90 sekund działania algorytmu.
 
 \subsubsection{Czas dla najlepszych rozwiązań}
-TODO prawdopodobnie porównywanie czasów dla różnych najlepszych wyników to nie jest najlepsze rozwiązanie, bo gorszy algorytm czyli Bron-Kerbosch pokazuje lepsze czasy ale są to czasy dla gorszych wyników. Trzeba pobawić się trochę R i wybrać odpowiednie wyniki.
-
 Wyniki przedstawione zostały na wykresach \ref{fig:dimacs-best-time-part1} i \ref{fig:dimacs-best-time-part2}. Na wykresie, dla niektórych grafów widzimy bardzo niskie czasy. Nie oznacza to jedak, że algorytm znalazł optymalne rozwiązanie w krótkim czasie. Oznacza to, że algorytm znalazł jedno rozwiązanie dość szybko, a potem nie mógł znaleźć żadnego lepszego rozwiązania w ciągu kolejnych 90 sekund. Dotyczy to grafów 
 p\_hat300\_1.clq, p\_hat1500-1.clq, gen200\_p0.9\_44, brock200\_2.b, DSJC500. W niektórych przypadkach dotyczy to tylko algorytmu Brona-Kerboscha np. dla grafu C500.9.clq algorytm BasicMC znalazł lepsze rozwiązanie przed końcem czasu.
-
 
 
 \begin{figure}[H]
@@ -520,10 +513,10 @@ Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest z
 \end{figure}
 
 
-\section{Wnioski}
+\section{Wnioski końcowe}
+Porównując algorytmy dochodzimy do wniosku, że algorytm BasicMC jest algorytmem lepszym przy danych założeniach testowych. Osiąga lepsze wyniki w mniejszym czasie i wykazuje się mniejszymi wymaganiami pamięciowymi chociażby dlatego, że nie przechowuje wszystkich znalezionych klik, a jedynie najlepsze rozwiązania.
 
-TODO tutaj będą zebrane wszystkie wnioski na temat obu algorytmów. Część informacji będzie powtórzona z poprzednich sekcji. Tutaj po prostu bedą zebrane w jednym miejscu.
-
+TODO co więcej można tutaj napisać? Jakieś ogólne wnioski na temat projektu, np. ze algorytm w Scali dobrze wygląda? Że jakieś stosunkowo niezłe (nie najlepsze) rozwiązania da się znaleźć w krótkim czasie?
 
 \nocite{*}
 \bibliographystyle{plainnat}
