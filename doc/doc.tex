@@ -76,7 +76,9 @@ Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usu
 
 \subsection{Złożoność}
 
-Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w sprawozdaniu\ref{fig:time-complexity}
+Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności klasycznego algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w sprawozdaniu\ref{fig:time-complexity}. Istnieją odmiany tego algorytmu działające w czasie $O(3^{n/3})$\citep{tomita}.
+
+W ogólności problem znajdowania kliki jest NP trudny\citep{karp}. Algorytm o najniższym ograniczeniu teoretycznym cechuje się złożonością czasową należącą do klasy $O(1.8888^{n})$\citep{robson}
 
 \begin{algorithm}
 \caption{BasicMC}\label{basicmc}
