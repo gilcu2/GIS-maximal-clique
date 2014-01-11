@@ -12,6 +12,24 @@
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{listings}
+
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
 \author{Marek Lewandowski, Juliusz Gonera}
 \date{}
 \title{Porównanie algorytmów znajdowania maksymalnej kliki w grafie}
@@ -88,6 +106,7 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 Projekt testów został podzielony na 3 części, każda odpowiedzialna za inny aspekt programu.
 
 \subsection{Testy funkcjonane}
+TODO ta sekcja powinna zostać usunięta z dokumentacji końcowej
 Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji pozbawiona jest błędów. W ramach tych testów przetestowane zostaną przypadki:
 
 \begin{itemize}
@@ -101,6 +120,7 @@ Mają na celu pokazanie, że zaimplementowany algorytm jak i reszta aplikacji po
 Dla pozostałej części programu - obsługi wejścia, wyjścia, opcji i innych - zostaną wykonane odpowiednie testy.
 
 \subsection{Testy złożoności}
+TODO Ta sekcja powinna zostać połączona z wynikami badaniami złożoności jako jakiś teoretyczny wstęp
 \subsubsection{Złożoność pamięciowa}
 Złożoność pamięciowa zostanie ustalona empirycznie na podstawie pomiarów pamięci zużytej przez program dla grafów o różnej wielkości. Oczekiwana złożoność pamięciowa programu to $O(|V|)$ (\ref{memory_complexity}). 
 
@@ -110,7 +130,9 @@ Testy mają na celu empiryczne zmierzenie złożoności obliczeniowej. W tym cel
 
 
 \subsection{Testy porównawcze}
-W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
+TODO ta podsekcja powinna zostać usunięta z ostatecznej dokumentacji końcowej
+W celu empirycznego porównania wydajności algorytmów zostanie użyty DIMACS Benchmark Set\citep{dimacs}. Jest to zbiór nietrywialnych grafów 
+dla których znana jest liczba wierzchołków tworzących maksymalną klikę w grafie.
 
 Przed faktycznym mierzeniem czasu algorytmu dla danego grafu, algorytm zostanie uruchomiony wielokrotnie dla prostego problemu grafowego w celu ,,nagrzania'' JVM. Sam proces rozgrzewania JVM jest potrzebny do tego, aby program dawał wiarygodne wyniki, które nie są zaburzone optymalizacjami kompilatora JIT, takimi jak generowanie natywnego kodu dla często wykonywanych fragmentów kodu.
 
@@ -158,11 +180,11 @@ Wejściem programu są pliki tekstowe ASCII. Wejście zawiera $|E|+1$ linii nie 
 \begin{verbatim}
 p col |V| |E|
 \end{verbatim}
-Gdzie $|V|$ i $|E|$ to odpowiednio liczba węzłów i krawędzi grafu. Następne $|E|$ linijek odpowiada $|E|$ krawędziom grafu. Krawędź $(v, w)$ zapisywana jest jako 
+Gdzie $\text{p col}$ to po prostu przyjęte znaki tekstowe. $|V|$ i $|E|$ to odpowiednio liczba węzłów i krawędzi grafu. Następne $|E|$ linijek odpowiada $|E|$ krawędziom grafu. Krawędź $(v, w)$ zapisywana jest jako 
 \begin{verbatim}
 e W V
 \end{verbatim}
-i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
+i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Podobnie jak wcześniej $e$ to zwykły znak. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
 
 \subsection{Opcje programu}
 Dostępne opcje można zobaczyć poprzez uruchomienie programu bez żadnych dodatkowych argumentów i bez podawania danych wejściowych. Opcje opisane zostały także poniżej.
@@ -178,20 +200,31 @@ Ograniczenie to dotyczy czasu działania \emph{algorytmu}, a nie \emph{programu}
 \subsection{Wyniki cząstkowe}
 Domyślnie program wyświetla tylko najlepsze znalezione rozwiązanie. Korzystając z opcji $-progress$ program będzie wyświetlał na bieżąco kolejne najlepsze rozwiązania.
 
+\subsection{Tylko rozmiar kliki}
+Domyślnie program wyświetla etykiety wierzchołków tworzących klikę. Korzystając z opcji $-sizeOnly$ program będzie wyświetlał tylko rozmiar kliki bez wypisywania wierzchołków. Więcej informacji przy opisie formatowania.
+
 \subsection{Formatowanie}
 Domyślnie program wyświetla wyniki w poniższym formacie:
 
 \begin{verbatim}
 w(g) TIME
+V1 V2 V3 ...
 \end{verbatim}
-Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki a $\text{TIME}$ - czas wykonania algorytmu w milisekundach.
+Gdzie $\omega(g)$ to rozmiar największej znalezionej kliki, $\text{TIME}$ - czas wykonania algorytmu w milisekundach, $\text{V1 V2 V3}$ to etykiety wierzchołków, które tworzą klikę maksymalną. Przykładowy wynik to:
+
+\begin{verbatim}
+24 613
+101 120 52 110 125 20 93 29 121 85 105 17 118 12 81 39 98 66 3 67 11 23 119 47
+\end{verbatim}
+
+Korzystając z opcji $-sizeOnly$ format wyjściowy nie będzie zawierał drugiej linijki. 
 
 Korzystając z opcji $-csv$ program będzie wyświetlał wynik w formacie CSV z większa ilością informacji. Kolejne kolumny to:
 \begin{verbatim}
-Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY
+Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY, CLIQUE
 \end{verbatim}
 
-gdzie $\text{MEMORY}$ to zużyta pamięć w kB.
+gdzie $\text{MEMORY}$ to zużyta pamięć w kB, a $\text{CLIQUE}$ to numery wierzchołków podobnie jak w prostej wersji formatu. Korzystając z opcji $-sizeOnly$ wyjście nie będzie zawierało kolumny $\text{CLIQUE}$.
 
 \subsection{Tryb benchmark}
 Program można włączyć w trybie benchmark. Będzie wtedy testował dany algorytm na losowo wygenerowanym spójnym grafie nieskierowanym z zadanymi parameterami. Aby włączyć program w tym trybie należy podać argument z dwiema wartościami \emph{\text{-benchmark N p}} gdzie $N$ to maksymalna liczba wierzchołków w losowo wygenerowanym grafie, a $p$ to prawdopodobieństwo wystąpienia krawędzi. $N$ powinno być większe od 10.
@@ -214,9 +247,9 @@ java -Xmx2G -jar gis-maximal-clique.jar -max 30 -j < data/graph
 Uruchamia program z ograniczeniem czasowym 30 sekund korzystając z algorytmu Brona-Kerboscha dla grafu w formacie dimacs dostępnego pod ścieżką data/graph
 
 \begin{verbatim}
-java -Xmx2G -jar gis-maximal-clique.jar -benchmark 100 0.9
+java -Xmx2G -jar gis-maximal-clique.jar -benchmark 60 0.9
 \end{verbatim}
-Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 100 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
+Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 60 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
 
 \begin{verbatim}
 java -Xmx2G -jar gis-maximal-clique.jar  -benchmark 50 0.7 -j
@@ -249,14 +282,45 @@ Modyfikacje biblioteki znajdują się w pakiecie \emph{extensions}.
 Szczegóły dotyczące API zawarte są w dokumentacji ScalaDoc dołączonej do sprawozdania.
 
 
-\section{Przełożenie algorytmu na kod}
-TODO Opis wykorzystania kodu dla programisty (która funkcja co realizuje, w jaki sposób)
-TODO algorytm
+\subsection{Implementacja algorytmu BasicMC}
+Dzięki bogatej składni języka Scala implementacja wygląda bardzo podobnie do pseudokodu algorytmu.
+
+\begin{lstlisting}[language=scala]  % Start your code-block
+
+def maximalClique(g: UndirectedGraph): Set[Node] = {
+    type V = Node
+    var Q = Set[V]()
+    var Qmax = Set[V]()
+
+    def expand(r: Set[V]): Set[V] = {
+      var R = r
+      while (R.nonEmpty) {
+        val p = R.head
+        if (Q.size + R.size > Qmax.size) {
+          Q = Q + p
+          val Rp = R intersect g.adj(p)
+          if (Rp.nonEmpty) expand(Rp)
+          else if (Q.size > Qmax.size) {
+            Qmax = Q
+          }
+          Q = Q - p
+        }
+        else Qmax
+        R = R - p
+      }
+      Qmax
+    }
+
+    expand(g.V)
+  }
+\end{lstlisting}
 
 \section{Porównanie algorytmów}
 Algorytmy zostały porównane przy użyciu grafów DIMACS\citep{dimacs}. Są to na tyle nietrywialne grafy, że otrzymanie najlepszego znanego wyniku dla danego grafu zajmuje bardzo długi czas. Najlepszy znany wynik dla grafu C125.9\footnote{graf losowy z 125 wierzchołkami i prawdopodobieństwem krawędzi 0.9}  to $w(g)=34$. Aby ten wynik otrzymać algorytm BasicMC potrzebował, aż 5 godzin i 25 minut. Klikę o wielkości 33 znalazł po 15 minutach.
 
 Zdecydowaliśmy się zatem ograniczyć czas działania algorytmów do 90 sekund na każdy problem i porównać wyniki pomijając fakt, że są one dużo gorsze od najlepszych rozwiązań.
+
+Grafy DIMACS można znaleźć w \cite{dimacs}.
 
 \subsection{Warunki przeprowadzonych testów na zbiorze DIMACS}
 Każdy test został przeprowadzony w następujących warunkach:
@@ -355,11 +419,19 @@ Testy sprawdzają czy zachowane są następujące własności grafu:
   \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków większej niż 4 ma maksymalną klikę o wielkości 3
   \item graf zbudowany na cięciwach okręgu (circle graph) o liczbie wierzchołków równej 4 ma max. klikę o wielkości 4
   \item drzewo ma maksymalną klikę o wielkości 2
+  \item graf niespójny mający dwa podgrafy $K_{n_{1}}$ $K_{n_{2}}$ posiada maksymalną klikę wynoszącą $max(n_{1}, n_{2})$
 \end{itemize}
 
 Struktura grafów użytych w testach jest generowana losowo przy każdym uruchomieniu testów.
 
-Aby uruchomić testy należy wykonać \textit{sbt test} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
+Testy które sprawdzają, że losowo wygenerowany graf jest poprawny:
+\begin{itemize}
+  \item test spójności grafu - każdy wierzchołek ma conajmniej jednego sąsiada
+  \item test na oczekiwaną liczbę krawędzi grafu z zadanym prawdopodobieństwem $p$ - liczba krawędzi przy prawdopodobieństwie p zawiera się w oczekiwanej liczbie krawędzi dla losowego grafu od $(p - \epsilon, p + \epsilon)$
+  \item graf ma zadaną liczbę wierzchołków $n$
+\end{itemize}
+
+Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest zatem program sbt http://www.scala-sbt.org/} w głównym katalogu programu. Pełna lista spełnianych asercji została umieszczona w sprawozdaniu \ref{fig:tests}.
 
 \begin{figure}[H]
   \begin{center}
@@ -370,6 +442,12 @@ Aby uruchomić testy należy wykonać \textit{sbt test} w głównym katalogu pro
   \caption{Asercje spełniane przez BasicMC}
   \label{fig:tests}
 \end{figure}
+
+
+\section{Wnioski}
+
+TODO tutaj będą zebrane wszystkie wnioski na temat obu algorytmów. Część informacji będzie powtórzona z poprzednich sekcji. Tutaj po prostu bedą zebrane w jednym miejscu.
+
 
 \nocite{*}
 \bibliographystyle{plainnat}

@@ -117,11 +117,11 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
 
 /**
  * Result holder for each clique
- * @param size Size of the clique found
+ * @param nodes nodes forming clique that was found
  * @param elapsedTime Time elapsed in milliseconds
  * @param memoryInKb Memory used in kB
  */
-case class CliqueFound(size: Long, elapsedTime: Long, memoryInKb: Long)
+case class CliqueFound(nodes: Set[Node], elapsedTime: Long, memoryInKb: Long)
 
 object Graph {
 
@@ -199,7 +199,7 @@ object Graph {
       }
 
       val progress: (Set[Node] => Unit) = nodes => {
-        observer.onNext(CliqueFound(nodes.size, elapsedTime = timer(), memoryInKb = memory()))
+        observer.onNext(CliqueFound(nodes, elapsedTime = timer(), memoryInKb = memory()))
       }
 
       def initMetrics() = {

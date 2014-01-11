@@ -116,4 +116,8 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
     assert(qs.exists( q => q <= expectedQ(10, 0.82) && q >= expectedQ(10, 0.78)))
 
   }
+
+  "A random undirected graph with n nodes" should "have n nodes" in {
+    assert(Graph.randomUndirectedGraph(10, 0.8).V.size == 10)
+  }
 }
