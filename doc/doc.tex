@@ -70,7 +70,13 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 
 Zaimplementowany algorytm BasicMC opisany powyżej został porównany z klasycznym algorytmem Brona-Kerboscha, a konkretnie z jego implementacją udostępnianą przez bibliotekę JGraphT.
 
+\subsection{Opis Algorytmu}
+
 Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nie incydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wyberanego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
+
+\subsection{Złożoność}
+
+Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w sprawozdaniu\ref{fig:time-complexity}
 
 \begin{algorithm}
 \caption{BasicMC}\label{basicmc}
