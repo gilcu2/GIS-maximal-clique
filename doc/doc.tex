@@ -59,7 +59,7 @@ W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q_{max}$ jest maksymalną 
 
 \subsection{Złożoność Obliczeniowa}
 W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
-Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowanego algorytmu. Faktyczne zachowanie algorytmu w zależności od rozmiaru grafu wejściowego zostanie wyznaczone empirycznie.
+Jest to także dolne ograniczenie dla złożoności obliczeniowej implementowanego algorytmu. Faktyczne zachowanie algorytmu w zależności od rozmiaru grafu wejściowego zostało wyznaczone empirycznie.
 
 \subsection{Złożoność pamięciowa}
 \label{memory_complexity}
@@ -406,7 +406,31 @@ Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozos
 
 \section{Badanie złożoności}
 
-TODO
+Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowego została przedstawiona na \ref{fig:time-complexity}. Widać, że czas wykonania obydwu algorytmów rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Warto jednak zauważyć, że algorytm BasicMC dla sprawdzonych grafów w rzeczywistości wymaga mniej czasu niż implementacja algorytmu Brona-Kerbosch biblioteki z JGraphT.
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/czas.png}
+  }
+  \end{center}
+  \caption{Złożoność Czasowa Algorytmów}
+  \label{fig:time-complexity}
+\end{figure}
+\subsection{Złożoność pamięciowa}
+\label{memory_complexity}
+
+Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamiec rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC.
+
+\begin{figure}[H]
+  \begin{center}
+  \fbox{
+    \includegraphics[width=\textwidth]{img/pamiec.png}
+  }
+  \end{center}
+  \caption{Złożoność Pamięciowa Algorytmów}
+  \label{fig:memory-complexity}
+\end{figure}
 
 \section{Testy Poprawności Implementacji}
 
