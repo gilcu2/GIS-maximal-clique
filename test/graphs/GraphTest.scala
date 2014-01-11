@@ -120,4 +120,15 @@ class GraphTest extends FlatSpec with Matchers with GraphsFixtures {
   "A random undirected graph with n nodes" should "have n nodes" in {
     assert(Graph.randomUndirectedGraph(10, 0.8).V.size == 10)
   }
+
+  "For partially random graph with K20, K5, K7 subgraphs" should "find maximal clique K20" in {
+    val randomPartOfTheGraph = Graph.randomUndirectedGraph(20, 0.6)
+    val k20 = completeGraph(20, 19)
+    val k5 = completeGraph(5, 10)
+    val k7 = completeGraph(7, 38)
+
+    val graph = new UndirectedGraph(randomPartOfTheGraph.V ++ k20.V ++ k5.V ++ k7.V, randomPartOfTheGraph.E ++ k20.E ++ k5.E ++ k7.E)
+    assert(Graph.maximalClique(graph).size === 20)
+    assert(Graph.bronKerbosch(graph).size === 20)
+  }
 }
