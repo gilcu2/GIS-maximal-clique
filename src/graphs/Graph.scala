@@ -69,6 +69,8 @@ class UndirectedGraph(nodes: Set[Node], edges: Set[Edge]) extends Graph {
   type E = Edge
   type V = Node
 
+  type Algorithm = (UndirectedGraph) => Set[Node]
+
   private def createAdjacencyMap(): Map[V, Set[V]] = {
     val emptyMapOfNodesToAdjacentNodes: Map[V, Set[V]] = (nodes :\ Map[V, Set[V]]())((node, map) => {
       map updated(node, Set[V]())

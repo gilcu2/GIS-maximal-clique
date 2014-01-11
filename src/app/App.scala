@@ -16,6 +16,9 @@ import rx.lang.scala.Observable
   */
 object App extends scala.App {
 
+  type Algorithm = (UndirectedGraph) => Set[Node]
+
+
   /**
     * DIMACS graph with optional metadata for ease of construction [[graphs.UndirectedGraph]]
     *
@@ -85,7 +88,14 @@ object App extends scala.App {
    * @param avgDuration average duration of algorithm in milliseconds
    * @param avgMemory average memory taken by algorithm in kb
    */
-  case class BenchmarkResult(n: Int, avgDuration: Double, avgMemory: Double)
+  case class BenchmarkResult(n: Int, avgDuration: Double, avgMemory: Double) {
+    override def toString = {
+      val s1 = n.toString
+      val s2 = avgDuration.toString
+      val s3 = avgMemory.toString
+      List(s1, s2, s3).mkString(",")
+    }
+  }
 
   /**
    * Performs benchmark and returns its results as list. Benchmark is performed on random undirected graph with given parameters.
@@ -101,7 +111,9 @@ object App extends scala.App {
    * @param applyAlgorithm function which applies algorithm to given graph
    * @return list of [[app.App.BenchmarkResult]]
    */
-  def measureTimeAndMemoryComplexity(maxNodes: Int, probabilityOfEdge: Double, applyAlgorithm: (UndirectedGraph) => Set[Node]) = {
+  def measureTimeAndMemoryComplexity(maxNodes: Int,
+                                     probabilityOfEdge: Double,
+                                     applyAlgorithm: Algorithm) = {
     var results = scala.collection.mutable.MutableList[BenchmarkResult]()
     for (n <- 10 to maxNodes) {
       val sampleSize = 4
@@ -122,6 +134,36 @@ object App extends scala.App {
     results.toList
   }
 
+  def measureAlgorithmPerformance(g: UndirectedGraph,
+                                  algorithm: Algorithm) = {
+
+    val (result, duration, memory) =
+      measureTimeAndMemory(() => algorithm(g))
+    BenchmarkResult(g.V.size, duration, memory)
+  }
+
+  def measureAverageAlgorithmPerformance(g: UndirectedGraph,
+                                         algorithm: Algorithm,
+                                         samples: Int) = {
+    val results = (1 to samples).map(i =>
+      measureAlgorithmPerformance(g, algorithm))
+    val time = results.map(_.avgDuration)
+    val memory = results.map(_.avgMemory)
+    val avgTime = time.foldLeft(0.0)(_+_) / samples
+    val avgMemory = memory.foldLeft(0.0)(_+_) / samples
+    BenchmarkResult(g.V.size, avgTime, avgMemory)
+  }
+
+  def benchmark(maxNodes: Int,
+                probabilityOfEdge: Double): List[String]  = {
+    val bronKerbosch = g => Graph.bronKerbosch(g)
+    val basicMc = g => Graph.maximalClique(g)
+    (10 to maxNodes).map( (n) => {
+      val g = Graph.randomUndirectedGraph(n, probabilityOfEdge)
+      List("Bron-Kerbosch," + measureAverageAlgorithmPerformance(g, bronKerbosch, 4).toString,
+      "BasicMC," + measureAverageAlgorithmPerformance(g, basicMc, 4))
+    }).flatten.toList
+  }
   /**
    * Program usage instructions, linux like style.
    */
@@ -195,10 +237,9 @@ object App extends scala.App {
       println(usage)
     }
     else {
-      val algorithm: (UndirectedGraph) => Set[Node] = if(appOptions.bronKerbosch) g => Graph.bronKerbosch(g) else g => Graph.maximalClique(g)
-      val results = measureTimeAndMemoryComplexity(appOptions.benchmarkMaxNodes, appOptions.probabilityOfEdge, algorithm)
-      val printableResults = { for(result <- results) yield (if(appOptions.bronKerbosch) "Bron-Kerbosch" else "BasicMC") :: result.n :: result.avgDuration :: result.avgMemory :: Nil }
-      println(printableResults.map(_.mkString(",")).mkString("\n"))
+      val printableResults = benchmark(appOptions.benchmarkMaxNodes,
+                                       appOptions.probabilityOfEdge)
+      println(printableResults.mkString("\n"))
     }
   }
   else if(System.in.available() > 0) {
