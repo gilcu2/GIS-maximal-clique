@@ -434,8 +434,10 @@ Test ten został przeprowadzony na grafie C125.9 z ograniczeniem 20 minut. Pozos
 \end{figure}
 
 \section{Badanie złożoności}
+Do badania złożoności użyty został tryb benchmark programu. Poniżej zaprezentowane zostały wyniki badań wraz z ich interpretacją i wnioskami.
 
-Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowego została przedstawiona na \ref{fig:time-complexity}. Widać, że czas wykonania obydwu algorytmów rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Warto jednak zauważyć, że algorytm BasicMC dla sprawdzonych grafów w rzeczywistości wymaga mniej czasu niż implementacja algorytmu Brona-Kerbosch biblioteki z JGraphT.
+\subsection{Złożoność czasowa}
+Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowego została przedstawiona na \ref{fig:time-complexity}. Widać, że czas wykonania obydwu algorytmów rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Warto jednak zauważyć, że algorytm BasicMC dla sprawdzonych grafów w rzeczywistości wymaga mniej czasu niż implementacja algorytmu Brona-Kerbosch biblioteki z JGraphT. Wynika to z faktu, że algorytm BasicMC bardziej ogranicza przestrzeń poszukiwań rozwiązań pomiając wszystkie zbiory, dla których mógłby znaleźć klikę niewiększą od aktualnie najlepszej.
 
 \begin{figure}[H]
   \begin{center}
@@ -446,10 +448,11 @@ Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowe
   \caption{Złożoność Czasowa Algorytmów}
   \label{fig:time-complexity}
 \end{figure}
+
+
 \subsection{Złożoność pamięciowa}
 \label{memory_complexity}
-
-Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamięć rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC\footnote{skrót od ang. Garbage Collector}.
+Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Patrząc na wykres można by się pokusić o stwierdzenie, że zużywana pamięć rośnie wykładniczo w stosunku do wielkości grafu, ale to byłby błąd. Obraz jest zaburzony ze względu na działanie GC\footnote{skrót od ang. Garbage Collector}. Widać nawet moment, w którym GC wykonał dużą pracę. Zaraz za $n=40$ zużycie pamięci drastycznie spada wskutek działania GC. Oczekiwane zużycie pamięci powinno być zależnością liniową. Pomijając kilka punktów można zauważyć, że zużywana pamięć powoli się zwiększa. Zużycie pamięci jest bardziej zauważalne dla algorytmu Brona-Kerboscha, ponieważ przechowuje on wszystkie znalezione kliki maksymalne. Dla dużych i gęstych grafów takich klik maksymalnych pośredniej wielkości może być bardzo dużo. Z tego powodu algorytm Brona-Kerboscha nie wykonał się poprawnie dla grafu MANN\_a81.clq - zabrakło pamięci na dalsze rozwiązania.
 
 \begin{figure}[H]
   \begin{center}
@@ -503,8 +506,9 @@ Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest z
 
 
 \section{Podsumowanie}
-Problem poszukiwań maksymalnej jest problemem trudnym obliczeniowo. Zgodnie z oczekiwaniami zmierzona złożoność obliczeniowa rosła wykładniczo. 
-Porównując algorytmy dochodzimy do wniosku, że algorytm BasicMC jest algorytmem lepszym przy danych założeniach testowych. Osiąga lepsze wyniki w krótszym czasie i wykazuje się mniejszymi wymaganiami pamięciowymi chociażby dlatego, że nie przechowuje wszystkich znalezionych klik, a jedynie najlepsze rozwiązania.
+Problem poszukiwań maksymalnej kliki jest problemem trudnym obliczeniowo. Zgodnie z oczekiwaniami zmierzona złożoność obliczeniowa rosła wykładniczo. Badanie złożoności pamięciowej było bardziej skomplikowanym zadaniem ze względu brak kontroli momentu zwalniania pamięci. Wyniki były trudniejsze do zinterpretowania, ale również zgadzały się z oczekiwaniami.
+
+Porównując algorytmy dochodzimy do wniosku, że algorytm BasicMC jest algorytmem lepszym przy danych założeniach testowych. Osiąga lepsze wyniki w krótszym czasie i wykazuje się mniejszymi wymaganiami pamięciowymi chociażby dlatego, że nie przechowuje wszystkich znalezionych klik, a jedynie najlepsze rozwiązanie.
 
 W retrospekcji wybór języka Scala do implementacji okazał się trafny. Bogata składnia i możliwości języka pozwalają na elegancką implementację algorytmów i reszty programu.
 
