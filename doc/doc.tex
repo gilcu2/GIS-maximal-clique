@@ -43,7 +43,7 @@ Definicje klik:
 \begin{description}
 \item[Klika] - kliką w grafie $G$ jest kompletny podgraf grafu $G$.
 \item[Klika maksymalna] - klika, która nie może być rozszerzona poprzez dołączenie kolejnego sąsiadującego wierzchołka - oznacza to, że klika maksymalna nie jest podzbiorem innej większej kliki. 
-\item[Największa klika] - klika o największej ilości wierzchołków. Największa klika jest kliką maksymalną, ale odwrotne stwierdzenie nie jest prawdziwe.
+\item[Największa klika] - klika o największej liczbie wierzchołków. Największa klika jest kliką maksymalną, ale odwrotne stwierdzenie nie jest prawdziwe.
 \end{description}
 
 Definicje klik zostały zaczerpnięte z \cite{weissteinClique}. Problem znajdowania maksymalnej kliki w grafie jest problemem NP-zupełnym i jest jednym z 21 NP zupełnych problemów Karpa \cite{Kar72}.
@@ -64,11 +64,11 @@ W algorytmie \ref{basicmc} wykorzystywane są zbiory $Q$ i $Q_{max}$. $Q$ przech
 
 \subsection{Opis Algorytmu}
 
-Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$ który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia, ponieważ wiadomo, że nie znajdzie tam większej kliki.\algref{basicmc}{skip}
+Początkowo $Q := \emptyset, Q_{max} := \emptyset, R := V$. Wybieramy wierzchołek $p$ z dostępnych wierzchołków w $R$ i dodajemy go do $Q$ \algref{basicmc}{addPToQ}. Następnie obliczamy $R_{p} := R \cap \text{adj(}p\text{)}$, który staje się nowym zbiorem wierzchołków do przejrzenia. Procedura EXPAND() jest wywoływana rekursywnie do wyczerpania zbioru wierzchołków $R_{p}$. Jeśli $|Q|+|R| \leq |Q_{max}|$ to $Q \cup R$ może zawierać jedynie klikę niewiększą od $|Q_{max}|$, w tym przypadku algorytm pomija zbędne obliczenia, ponieważ wiadomo, że nie znajdzie tam większej kliki. Pseudokod algorytmu \algref{basicmc}{skip}
 
 \subsection{Warunek Stopu}
 
-W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q_{max}$ jest maksymalną kliką. Jeśli $|Q| > |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$)
+W momencie osiągnięcia $R_{p} = \emptyset$, Zbiór $Q_{max}$ jest maksymalną kliką. Jeśli $|Q| > |Q_{max}|$ zbiór $Q$ zastępuje zbiór $Q_{max}$. Po usunięciu wierzchołka początkowego $p$ z $Q$ i $R$ wybieramy go z wierzchołków pozostałych w $R$ i powtarzamy do przejrzenia wszystkich wierzchołków ($R = \emptyset$).
 
 \subsection{Złożoność Obliczeniowa}
 W grafie o $n$ wierzchołkach może być nie więcej niż $3^{\frac{n}{3}}$ maksymalnych klik. Złożoność obliczeniowa algorytmu Brona-Kerboscha wynosi $O(3^{\frac{n}{3}})$.
@@ -83,24 +83,18 @@ Złożoność pamięciowa implementowanego algorytmu to $O(|V|)$. Ilość pamię
 \label{bron-kerbosch-alg}
 Zaimplementowany algorytm BasicMC opisany powyżej został porównany z klasycznym algorytmem Brona-Kerboscha, a konkretnie z jego implementacją udostępnianą przez bibliotekę JGraphT.
 
-<<<<<<< HEAD
 \subsection{Opis Algorytmu}
 
-Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nie incydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wyberanego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
-=======
-Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nieincydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wybranego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek.\citep{bron-kerbosch}
->>>>>>> Be explicit about repeated paragraphs from previous docs. Improvements here and there.
+Algorytm Brona-Kerboscha wybiera wierzchołek $v$ z $P$. Dodaje $v$ do $R$ i usuwa wierzchołki nie incydentne z v ze zbiorów $P$ i $X$. Dalej wybieramy kolejny wierzchołek z nowego zbioru $P$ i powtarzamy proces. Kontynuujemy dopóki $P$ nie jest zbiorem pustym. Gdy $P$ jest pusty i $X$ jest pusty zgłaszamy znalezienie nowej największej kliki (jeśli nie jest największa to $R$ zawiera podzbiór już znalezionej kliki), zawartej w zbiorze $R$. Wtedy cofamy się do ostatniego wybranego wierzchołka i przywracamy $P$, $R$, $X$ do stanu przed wyborem kliki, usuwamy wierzchołek z $P$, dodajemy go do $X$ i rozwijamy kolejny wierzchołek. Algorytm rozpoczyna się od pustych zbiorów $R$ i $X$ i zbioru $P$ zawierającego wszystkie wierzchołki w grafie. \citep{bron-kerbosch}
 
 \subsection{Złożoność}
 
-Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności klasycznego algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w sprawozdaniu\ref{fig:time-complexity}. Istnieją odmiany tego algorytmu działające w czasie $O(3^{n/3})$\citep{tomita}.
+Jak dotąd nie zostały opublikowane teoretyczne ograniczenia dla złożoności klasycznego algorytmu Brona-Kerboscha\citep{tomita}. Empiryczne rezultaty z naszy testów zostały zamieszczone w rozdziale \ref{fig:time-complexity}. Istnieją odmiany tego algorytmu działające w czasie $O(3^{n/3})$\citep{tomita}.
 
 W ogólności problem znajdowania kliki jest NP trudny\citep{karp}. Algorytm o najniższym ograniczeniu teoretycznym cechuje się złożonością czasową należącą do klasy $O(1.8888^{n})$\citep{robson}
 
 \section{Różnice między algorytmami}
-Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha jest to, że BasicMC szuka jedynie największej kliki. Algorytm Brona-Kerboscha znajduje wszystkie maksymalne kliki, z których później wybierana jest największa.
-
-TODO czy coś więcej można tutaj napisać?
+Zasadniczą różnicą między algorytmem BasicMC i algorytmem Brona-Kerboscha jest to, że BasicMC szuka jedynie największej kliki. Algorytm Brona-Kerboscha znajduje wszystkie maksymalne kliki, z których później wybierana jest największa. W związku z tym algorytm Brona-Kerboscha ma więcej zastosowań niż BasicMC. 
 
 \begin{algorithm}[H]
 \caption{BasicMC}\label{basicmc}
@@ -226,13 +220,13 @@ Gdzie $\text{p col}$ to po prostu przyjęte znaki tekstowe. $|V|$ i $|E|$ to odp
 \begin{verbatim}
 e W V
 \end{verbatim}
-i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Podobnie jak wcześniej $e$ to zwykły znak. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}
+i występuje tylko raz. Krawędź $(w, v)$ stanowi części reprezentacji tekstowej grafu. Podobnie jak wcześniej $e$ to zwykły znak. Opisany format jest podzbiorem formatu DIMACS opisanego w \cite{dimacs_format}.
 
 \subsection{Opcje programu}
 Dostępne opcje można zobaczyć poprzez uruchomienie programu bez żadnych dodatkowych argumentów i bez podawania danych wejściowych. Opcje opisane zostały także poniżej.
 
 \subsection{Wybór algorytmu}
-Domyślnie program korzysta z algorytmu BasicMC. Aby skorzystać z algorytmu Brona-Kerboscha należy dodać argument $-j$
+Domyślnie program korzysta z algorytmu BasicMC. Aby skorzystać z algorytmu Brona-Kerboscha należy dodać argument $-j$.
 
 \subsection{Ograniczenia czasowe}
 Domyślnie program działa bez ograniczenia czasowego. Mając na uwadze złożoność problemu, program może wykonywać się bardzo długo szczególnie dla dużych grafów. Można ograniczyć działanie algorytmu poprzez podanie argumentu \emph{\text{-max sekundy}} podając odpowiednią liczbę sekund.
@@ -269,12 +263,12 @@ Nazwa grafu, Użyty algorytm, w(g), TIME, MEMORY, CLIQUE
 gdzie $\text{MEMORY}$ to zużyta pamięć w kB, a $\text{CLIQUE}$ to numery wierzchołków podobnie jak w prostej wersji formatu. Korzystając z opcji $-sizeOnly$ wyjście nie będzie zawierało kolumny $\text{CLIQUE}$.
 
 \subsection{Tryb benchmark}
-Program można włączyć w trybie benchmark. Będzie wtedy testował dany algorytm na losowo wygenerowanym spójnym grafie nieskierowanym z zadanymi parameterami. Aby włączyć program w tym trybie należy podać argument z dwiema wartościami \emph{\text{-benchmark N p}} gdzie $N$ to maksymalna liczba wierzchołków w losowo wygenerowanym grafie, a $p$ to prawdopodobieństwo wystąpienia krawędzi. $N$ powinno być większe od 10.
+Program można włączyć w trybie benchmark. Będzie wtedy testował algorytmy na losowo wygenerowanym spójnym grafie nieskierowanym z zadanymi parameterami. Aby włączyć program w tym trybie należy podać argument z dwiema wartościami \emph{\text{-benchmark N p}} gdzie $N$ to maksymalna liczba wierzchołków w losowo wygenerowanym grafie, a $p$ to prawdopodobieństwo wystąpienia krawędzi. $N$ powinno być większe od 10.
 
-Opcja benchmark łączy się tylko z wyborem algorytmu. Pozostałe argumenty są pomijane. Format wyjściowy to CSV.
+Pozostałe argumenty są pomijane. Format wyjściowy to CSV.
 
 \subsubsection{Działanie trybu benchmark}
-W tym trybie wybrany algorytm wykonywany jest na coraz większych grafach losowych. Zaczynając od 10 wierzchołków, aż do podanego w opcji $N$ budowane są losowe grafy z prawdopodobieństwem krawędzi $p$. Na grafie mierzony jest czas wykonania oraz zużyta pamięć dla obydwu algorytmów. Dla każdego pośredniego rozmiaru algorytm wykonywany jest kilkukrotnie. Wyniki są agregowane i uśredniane. Następnie zaczyna się testowanie na większym losowym grafie, aż do osiągnięcia podanego $N$.
+W tym trybie algorytmy wykonywane są na coraz większych grafach losowych. Zaczynając od 10 wierzchołków, aż do podanego w opcji $N$ budowane są losowe grafy z prawdopodobieństwem krawędzi $p$. Na grafie mierzony jest czas wykonania oraz zużyta pamięć dla obydwu algorytmów. Dla każdego pośredniego rozmiaru algorytm wykonywany jest kilkukrotnie. Wyniki są agregowane i uśredniane. Następnie zaczyna się testowanie na większym losowym grafie, aż do osiągnięcia podanego $N$.
 
 \subsection{Przykłady}
 
@@ -291,12 +285,7 @@ Uruchamia program z ograniczeniem czasowym 30 sekund korzystając z algorytmu Br
 \begin{verbatim}
 java -Xmx2G -jar gis-maximal-clique.jar -benchmark 60 0.9
 \end{verbatim}
-Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 60 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z algorytmu BasicMC.
-
-\begin{verbatim}
-java -Xmx2G -jar gis-maximal-clique.jar  -benchmark 50 0.7 -j
-\end{verbatim}
-Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 50 z prawdopodobieństwem wystąpienia krawędzi 0.7 korzystając z algorytmu Brona-Kerboscha.
+Uruchamia program w trybie benchmark na losowych grafach zaczynając od liczby wierzchołków 10 aż do 60 z prawdopodobieństwem wystąpienia krawędzi 0.9 korzystając z obywdu algorytmów.
 
 \section{Wprowadzenie do kodu dla programisty}
 Program został napisany w języku Scala. Do sprawdozdania dołączona została automatycznie wygenerowania dokumentacja ScalaDoc, która jest bardzo podobna do JavaDocu. Poniżej zebrane zostały najważniejsze informacje o programie służące do wprowadzenia programisty w temat programu.
@@ -307,7 +296,7 @@ Program został podzielony na dwa moduły. Moduł IO i moduł grafów.
 Moduł IO odpowiada za realizację funkcjonalności typowej dla aplikacji CLI, czyli interpretację argumentów, odczytanie wejścia, delegacji odpowiednich akcji do logiki grafów w zależności od podanych argumentów i wypisanie wyników na wyjście. Moduł IO został zdefiniowany w pakiecie \emph{app}.
 
 \subsection{Moduł grafów}
-Moduł grafów zawiera definicje generycznego funkcyjnego\footnote{a zatem niemutowalnego} grafu, implementacje niezorientowanego grafu, krawędzi, wierzchołków, algorytmów i funkcji pomocniczych. Najważniejszą funkcją jest funkcja \text{{graphs.Graph.findBiggestClique}}, która dokonuje obliczeń na grafie w wątkach działających w tle i w sposób asynchroniczny zwraca kolejne najlepsze wyniki. Użyta została tutaj abstrakcja znana z funkcyjnego reaktywnego programowania \emph{Observable}. Ze szczegółami tej abstrakcji czytelnik może zapoznać się u źródła \cite{rx}
+Moduł grafów zawiera definicje generycznego funkcyjnego\footnote{a zatem niemutowalnego} grafu, implementacje niezorientowanego grafu, krawędzi, wierzchołków, algorytmów i funkcji pomocniczych. Najważniejszą funkcją jest funkcja \text{{graphs.Graph.findBiggestClique}}, która dokonuje obliczeń na grafie w wątkach działających w tle i w sposób asynchroniczny zwraca kolejne najlepsze wyniki. Użyta została tutaj abstrakcja znana z funkcyjnego reaktywnego programowania \emph{Observable}. Ze szczegółami tej abstrakcji czytelnik może zapoznać się u źródła \cite{rx}.
 
 \subsubsection{Modyfikacje biblioteki JGraphT}
 W celu realizacji funkcjonalności wyników cząstkowych kod biblioteki musiał zostać zmodyfikowany. Konkretna klasa \emph{BronKerboschCliqueFinder} nie była otwarta na modyfikacje, dlatego też została przekopiowana do źródeł i zmodyfikowana. Dodana została także odpowiednia klasa w Scali opakowująca rozszerzoną klasę Javową z biblioteki tak, aby API było spójne i naturalne dla reszty programu.
@@ -460,7 +449,7 @@ Zależność czasu wykonania algorytmów w stosunku do rozmiaru grafu wejściowe
 \subsection{Złożoność pamięciowa}
 \label{memory_complexity}
 
-Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamiec rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC\footnote{skrót od ang. Garbage Collector}.
+Zależność pamięciowa algorytmów w stosunku do rozmiaru grafu wejściowego dla niektórych losowo wygenerowanych grafów została przedstawiona na \ref{fig:memory-complexity}. Widać, że zużywana pamięć rośnie wykładniczo w stosunku do wielkości grafów wejściowych co jest zgodne z oczekiwaniami. Punkty odstające są wynikiem działania GC\footnote{skrót od ang. Garbage Collector}.
 
 \begin{figure}[H]
   \begin{center}
@@ -513,10 +502,11 @@ Aby uruchomić testy należy wykonać \textit{sbt test}\footnote{wymagany jest z
 \end{figure}
 
 
-\section{Wnioski końcowe}
-Porównując algorytmy dochodzimy do wniosku, że algorytm BasicMC jest algorytmem lepszym przy danych założeniach testowych. Osiąga lepsze wyniki w mniejszym czasie i wykazuje się mniejszymi wymaganiami pamięciowymi chociażby dlatego, że nie przechowuje wszystkich znalezionych klik, a jedynie najlepsze rozwiązania.
+\section{Podsumowanie}
+Problem poszukiwań maksymalnej jest problemem trudnym obliczeniowo. Zgodnie z oczekiwaniami zmierzona złożoność obliczeniowa rosła wykładniczo. 
+Porównując algorytmy dochodzimy do wniosku, że algorytm BasicMC jest algorytmem lepszym przy danych założeniach testowych. Osiąga lepsze wyniki w krótszym czasie i wykazuje się mniejszymi wymaganiami pamięciowymi chociażby dlatego, że nie przechowuje wszystkich znalezionych klik, a jedynie najlepsze rozwiązania.
 
-TODO co więcej można tutaj napisać? Jakieś ogólne wnioski na temat projektu, np. ze algorytm w Scali dobrze wygląda? Że jakieś stosunkowo niezłe (nie najlepsze) rozwiązania da się znaleźć w krótkim czasie?
+W retrospekcji wybór języka Scala do implementacji okazał się trafny. Bogata składnia i możliwości języka pozwalają na elegancką implementację algorytmów i reszty programu.
 
 \nocite{*}
 \bibliographystyle{plainnat}

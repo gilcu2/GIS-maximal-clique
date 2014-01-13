@@ -193,9 +193,7 @@ object App extends scala.App {
       | "-max 90 -progress -csv < data/graph" Runs BasicMC algorithm for maximum of 90 seconds. Displays next best results (progress) using csv format
       | "-max 30 -j < data/graph >> results" Runs Bron-Kerbosch algorithm for maximum of 30 seconds
       | "-benchmark 100 0.9" Does benchmark on random undirected graphs starting at 10 nodes up to 100 nodes with
-      |  probability of edge 0.9 using BasicMC algorithm
-      | "-benchmark 50 0.7 -j" Does benchmark on random undirected graphs starting at 10 nodes up to 50 nodes with
-      |  probability of edge 0.7 using Bron-Kerbosch algorithm
+      |  probability of edge 0.9 using both algorithms
     """.stripMargin
 
   /**
